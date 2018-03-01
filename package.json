@@ -1,0 +1,27 @@
+{
+  "name": "@financial-times/n-user-api-client",
+  "version": "0.0.0",
+  "description": "Client to access User API on the FT Membership Platform",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "precommit": "node_modules/.bin/secret-squirrel",
+    "commitmsg": "node_modules/.bin/secret-squirrel-commitmsg"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Financial-Times/n-user-api-client.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Financial-Times/n-user-api-client/issues"
+  },
+  "homepage": "https://github.com/Financial-Times/n-user-api-client#readme",
+  "devDependencies": {
+    "@financial-times/n-gage": "^1.19.6"
+  },
+  "engines": {
+    "node": "^8.9.4"
+  }
+}
