@@ -1,5 +1,6 @@
 export interface SimpleListItem {
     description?: string,
+    code?: string,
     name?: string,
     selected?: boolean
 }

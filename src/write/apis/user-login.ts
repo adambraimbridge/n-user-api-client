@@ -1,20 +1,19 @@
 import {ErrorWithData} from '../../error';
 
-export const updateUserPasswordApi = ({userId, passwordData, authToken, apiHost, apiKey}) => {
+export const userLoginApi = ({email, password, authToken, apiHost, apiKey}) => {
     return new Promise(async (resolve, reject) => {
-        const errorMsg = 'Could not change user password';
-        const url = `${apiHost}/users/${userId}/credentials/change-password`;
+        const errorMsg = 'Could not log user in';
+        const url = `${apiHost}/login`;
         const body = {
-            password: passwordData.newPassword,
-            oldPassword: passwordData.oldPassword,
-            reasonForChange: 'owner-requested'
+            email,
+            password,
+            rememberMe: true
         };
         const options = {
             timeout: 10000,
             headers: {
                 'Content-Type': 'application/json',
-                'X-Api-Key': apiKey,
-                'Authorization': `Bearer ${authToken}`
+                'X-Api-Key': apiKey
             },
             method: 'POST',
             body: JSON.stringify(body)
@@ -22,7 +21,7 @@ export const updateUserPasswordApi = ({userId, passwordData, authToken, apiHost,
         try {
             const response = await fetch(url, options);
             if (response.ok)
-                return resolve(passwordData.newPassword);
+                return resolve(response.json());
             reject(new ErrorWithData(errorMsg));
         } catch (err) {
             reject(new ErrorWithData(errorMsg));
