@@ -14,13 +14,13 @@ const handleError = (res, defaultErrorMsg, graphQlQuery) => {
     return new Error(errorMsg);
 };
 
-export const getUserBySession = ({session, addListsToResponse = false}): Promise<GraphQlUserApiResponse> => {
+export const getUserBySession = ({session, demographicsLists}): Promise<GraphQlUserApiResponse> => {
     return new Promise(async (resolve, reject) => {
         const graphQlQuery = 'mma-user-by-session';
         const res = await canned(graphQlQuery, {session}, {timeout: 10000});
         const user = R.path(['data', 'user'], res);
         if (user) {
-            const transformed = graphQlToUserApi(user, addListsToResponse);
+            const transformed = graphQlToUserApi(user, demographicsLists);
             return resolve(transformed);
         }
         let defaultErrorMsg = `Unable to retrieve user for session ${session}`;

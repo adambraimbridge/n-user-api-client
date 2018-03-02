@@ -1,10 +1,9 @@
-import * as data from 'n-common-static-data';
 
-export const demographics = {
-    positions: data.demographics.positions.positions.filter(item => item.active),
-    responsibilities: data.demographics.responsibilities.responsibilities.filter(item => item.active),
-    industries: data.demographics.industries.industries.filter(item => item.active)
-};
+export const filterDemographicsLists = rawLists => ({
+    positions: rawLists.positions.positions.filter(item => item.active),
+    responsibilities: rawLists.responsibilities.responsibilities.filter(item => item.active),
+    industries: rawLists.industries.industries.filter(item => item.active)
+});
 
 export const titles = [
     {description: 'Ms', code: 'Ms'},

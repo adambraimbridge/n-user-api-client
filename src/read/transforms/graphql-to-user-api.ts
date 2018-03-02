@@ -1,5 +1,5 @@
 import * as R from 'ramda';
-import {demographics, titles} from '../static-data';
+import {filterDemographicsLists, titles} from '../static-data';
 import {SimpleList, SimpleListItem} from "../../types";
 
 const selectValueInList = (list: SimpleList, userValue: string): SimpleList => {
@@ -12,7 +12,8 @@ const selectValueInList = (list: SimpleList, userValue: string): SimpleList => {
     }));
 };
 
-export const addListsToUserData = (userData) => {
+export const addListsToUserData = (userData, demographicsLists) => {
+    const demographics = filterDemographicsLists(demographicsLists);
     return R.mergeDeepWith(
         (a, b) => b ? b : a,
         userData,
@@ -28,13 +29,13 @@ export const addListsToUserData = (userData) => {
         });
 };
 
-export const graphQlToUserApi = (user, addListsToResponse) => {
+export const graphQlToUserApi = (user, demographicsLists) => {
     let transformed = R.clone(user);
     transformed.profile.title = R.path(['profile', 'name', 'title'], transformed);
     transformed.profile.firstName = R.path(['profile', 'name', 'first'], transformed);
     transformed.profile.lastName = R.path(['profile', 'name', 'last'], transformed);
     delete transformed.profile.name;
-    if (addListsToResponse)
-        transformed = addListsToUserData(transformed);
+    if (demographicsLists)
+        transformed = addListsToUserData(transformed, demographicsLists);
     return transformed;
 };
