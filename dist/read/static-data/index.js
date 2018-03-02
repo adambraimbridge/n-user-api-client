@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.filterDemographicsLists = rawLists => ({
-    positions: rawLists.positions.positions.filter(item => item.active),
-    responsibilities: rawLists.responsibilities.responsibilities.filter(item => item.active),
-    industries: rawLists.industries.industries.filter(item => item.active)
+    positions: rawLists.positions.filter(item => item.active),
+    responsibilities: rawLists.responsibilities.filter(item => item.active),
+    industries: rawLists.industries.filter(item => item.active)
 });
 exports.titles = [
     { description: 'Ms', code: 'Ms' },
