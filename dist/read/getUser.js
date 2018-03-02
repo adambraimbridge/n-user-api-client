@@ -13,13 +13,13 @@ const handleError = (res, defaultErrorMsg, graphQlQuery) => {
     n_ui_1.metrics.count(`graphQl.${graphQlQuery}.failure`, 1);
     return new Error(errorMsg);
 };
-exports.getUserBySession = ({ session, addListsToResponse = false }) => {
+exports.getUserBySession = ({ session, demographicsLists }) => {
     return new Promise(async (resolve, reject) => {
         const graphQlQuery = 'mma-user-by-session';
         const res = await n_memb_gql_client_1.canned(graphQlQuery, { session }, { timeout: 10000 });
         const user = R.path(['data', 'user'], res);
         if (user) {
-            const transformed = graphql_to_user_api_1.graphQlToUserApi(user, addListsToResponse);
+            const transformed = graphql_to_user_api_1.graphQlToUserApi(user, demographicsLists);
             return resolve(transformed);
         }
         let defaultErrorMsg = `Unable to retrieve user for session ${session}`;

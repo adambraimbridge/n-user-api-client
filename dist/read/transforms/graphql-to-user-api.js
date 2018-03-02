@@ -11,25 +11,26 @@ const selectValueInList = (list, userValue) => {
         selected: item.code === userValue
     }));
 };
-exports.addListsToUserData = (userData) => {
+exports.addListsToUserData = (userData, demographicsLists) => {
+    const demographics = static_data_1.filterDemographicsLists(demographicsLists);
     return R.mergeDeepWith((a, b) => b ? b : a, userData, {
         profile: {
             titles: selectValueInList(static_data_1.titles, userData.profile.title),
             demographics: {
-                positions: selectValueInList(static_data_1.demographics.positions, userData.profile.demographics.position.code),
-                industries: selectValueInList(static_data_1.demographics.industries, userData.profile.demographics.industry.code),
-                responsibilities: selectValueInList(static_data_1.demographics.responsibilities, userData.profile.demographics.responsibility.code)
+                positions: selectValueInList(demographics.positions, userData.profile.demographics.position.code),
+                industries: selectValueInList(demographics.industries, userData.profile.demographics.industry.code),
+                responsibilities: selectValueInList(demographics.responsibilities, userData.profile.demographics.responsibility.code)
             }
         }
     });
 };
-exports.graphQlToUserApi = (user, addListsToResponse) => {
+exports.graphQlToUserApi = (user, demographicsLists) => {
     let transformed = R.clone(user);
     transformed.profile.title = R.path(['profile', 'name', 'title'], transformed);
     transformed.profile.firstName = R.path(['profile', 'name', 'first'], transformed);
     transformed.profile.lastName = R.path(['profile', 'name', 'last'], transformed);
     delete transformed.profile.name;
-    if (addListsToResponse)
-        transformed = exports.addListsToUserData(transformed);
+    if (demographicsLists)
+        transformed = exports.addListsToUserData(transformed, demographicsLists);
     return transformed;
 };

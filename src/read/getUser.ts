@@ -14,7 +14,7 @@ const handleError = (res, defaultErrorMsg, graphQlQuery) => {
     return new Error(errorMsg);
 };
 
-export const getUserBySession = ({session, demographicsLists}): Promise<GraphQlUserApiResponse> => {
+export const getUserBySession = ({session, demographicsLists}:{session: string, demographicsLists?: any}): Promise<GraphQlUserApiResponse> => {
     return new Promise(async (resolve, reject) => {
         const graphQlQuery = 'mma-user-by-session';
         const res = await canned(graphQlQuery, {session}, {timeout: 10000});
