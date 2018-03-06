@@ -1,4 +1,4 @@
-import {ErrorWithData} from '../../error';
+import {ErrorWithData} from '../../utils/error';
 
 export const updateUserPasswordApi = ({userId, passwordData, authToken, apiHost, apiKey}) => {
     return new Promise(async (resolve, reject) => {
@@ -23,9 +23,13 @@ export const updateUserPasswordApi = ({userId, passwordData, authToken, apiHost,
             const response = await fetch(url, options);
             if (response.ok)
                 return resolve(passwordData.newPassword);
-            reject(new ErrorWithData(errorMsg));
+            reject(new ErrorWithData(errorMsg, {
+                url
+            }));
         } catch (err) {
-            reject(new ErrorWithData(errorMsg));
+            reject(new ErrorWithData(errorMsg, {
+                url
+            }));
         }
     });
 };

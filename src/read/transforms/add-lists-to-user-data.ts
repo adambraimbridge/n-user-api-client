@@ -1,6 +1,6 @@
-import * as R from 'ramda';
-import {filterDemographicsLists, titles} from '../static-data';
+import {filterDemographicsLists, titles} from './static-data';
 import {SimpleList, SimpleListItem} from "../../types";
+import * as R from 'ramda';
 
 const selectValueInList = (list: SimpleList, userValue: string): SimpleList => {
     if (!userValue)
@@ -27,15 +27,4 @@ export const addListsToUserData = (userData, demographicsLists) => {
                 }
             }
         });
-};
-
-export const graphQlToUserApi = (user, demographicsLists) => {
-    let transformed = R.clone(user);
-    transformed.profile.title = R.path(['profile', 'name', 'title'], transformed);
-    transformed.profile.firstName = R.path(['profile', 'name', 'first'], transformed);
-    transformed.profile.lastName = R.path(['profile', 'name', 'last'], transformed);
-    delete transformed.profile.name;
-    if (demographicsLists)
-        transformed = addListsToUserData(transformed, demographicsLists);
-    return transformed;
 };

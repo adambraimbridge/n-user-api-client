@@ -1,4 +1,4 @@
-import {ErrorWithData} from "../../error";
+import {ErrorWithData} from "../../utils/error";
 
 export const updateUserProfileApi = ({userId, userUpdate, authToken, apiHost, apiKey}) => {
     return new Promise(async (resolve, reject) => {
@@ -18,9 +18,13 @@ export const updateUserProfileApi = ({userId, userUpdate, authToken, apiHost, ap
             const response = await fetch(url, options);
             if (response.ok)
                 return resolve(response.json());
-            reject(new ErrorWithData(errorMsg));
+            reject(new ErrorWithData(errorMsg, {
+                url
+            }));
         } catch (err) {
-            reject(new ErrorWithData(errorMsg));
+            reject(new ErrorWithData(errorMsg, {
+                url
+            }));
         }
     });
 };

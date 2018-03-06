@@ -1,0 +1,52 @@
+{
+  "data": {
+    "user": {
+      "subscriber": {
+        "status": {
+          "subscriptions": [],
+          "lapsedSubscriber": false,
+          "currentTriallist": false,
+          "currentSubscriber": false
+        },
+        "billingAccount": null
+      },
+      "profile": {
+        "primaryTelephone": "999",
+        "name": {
+          "title": "Mr",
+          "last": "Gorman",
+          "first": "Dave"
+        },
+        "marketing": {
+          "byPost": false,
+          "byEmail": false
+        },
+        "homeAddress": {
+          "townCity": "Birmingham",
+          "state": null,
+          "postcode": "B1 7QB",
+          "line2": "Moseley",
+          "line1": "1 School Road",
+          "country": "GBR"
+        },
+        "email": "dave.gorman@ft.com",
+        "demographics": {
+          "responsibility": {
+            "description": "Information technology",
+            "code": "TEC"
+          },
+          "position": {
+            "description": "Politician/Government Minister",
+            "code": "PO"
+          },
+          "industry": {
+            "description": "Comms/Publishing/Media",
+            "code": "MAP"
+          }
+        },
+        "b2bProfile": null
+      },
+      "id": "123"
+    }
+  }
+}

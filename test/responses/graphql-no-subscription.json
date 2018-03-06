@@ -1,0 +1,51 @@
+{
+  "data": {
+    "user": {
+      "subscriber": {
+        "status": {
+          "subscriptions": [],
+          "lapsedSubscriber": false,
+          "currentTriallist": false,
+          "currentSubscriber": false
+        }
+      },
+      "profile": {
+        "primaryTelephone": "023492348",
+        "name": {
+          "title": "Sir",
+          "last": "Gorman",
+          "first": "Dave"
+        },
+        "marketing": {
+          "byPost": false,
+          "byEmail": false
+        },
+        "homeAddress": {
+          "townCity": "Manchester",
+          "state": null,
+          "postcode": "E15 1JZ",
+          "line2": "Oldham",
+          "line1": "5 Gary Lane",
+          "country": "GBR"
+        },
+        "email": "1324123@ft.com",
+        "demographics": {
+          "responsibility": {
+            "description": "Information technology",
+            "code": "TEC"
+          },
+          "position": {
+            "description": "Manager/Supervisor",
+            "code": "MA"
+          },
+          "industry": {
+            "description": "Comms/Publishing/Media",
+            "code": "MAP"
+          }
+        },
+        "b2bProfile": null
+      },
+      "id": "123"
+    }
+  }
+}

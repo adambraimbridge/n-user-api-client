@@ -1,0 +1,80 @@
+{
+  "data": {
+    "user": {
+      "subscriber": {
+        "status": {
+          "subscriptions": [
+            {
+              "trialSubscription": true,
+              "trialPrice": {
+                "value": "1.00",
+                "symbol": "£",
+                "nativeSymbol": "£",
+                "currency": "GBP"
+              },
+              "trialEndDate": "2018-03-20T00:00:00.000Z",
+              "term": "P1M",
+              "status": "Active",
+              "startDate": "2018-02-21T00:00:00.000Z",
+              "renewalDate": "2018-03-21T00:00:00.000Z",
+              "reference": "subs",
+              "productName": "Premium FT.com",
+              "productCodes": [
+                "P2"
+              ],
+              "price": {
+                "value": "43.00",
+                "symbol": "£",
+                "nativeSymbol": "£",
+                "currency": "GBP"
+              },
+              "fulfilmentOption": null,
+              "endDate": null,
+              "active": true
+            }
+          ],
+          "lapsedSubscriber": false,
+          "currentTriallist": true,
+          "currentSubscriber": true
+        }
+      },
+      "profile": {
+        "primaryTelephone": "123456789",
+        "name": {
+          "title": null,
+          "last": "Doe",
+          "first": "John"
+        },
+        "marketing": {
+          "byPost": false,
+          "byEmail": false
+        },
+        "homeAddress": {
+          "townCity": null,
+          "state": null,
+          "postcode": null,
+          "line2": null,
+          "line1": null,
+          "country": "GBR"
+        },
+        "email": "1519206298990@ft.com",
+        "demographics": {
+          "responsibility": {
+            "description": "Broker/trader",
+            "code": "RES"
+          },
+          "position": {
+            "description": "Business School Academic",
+            "code": "BU"
+          },
+          "industry": {
+            "description": "Automobiles",
+            "code": "CAR"
+          }
+        },
+        "b2bProfile": null
+      },
+      "id": "123"
+    }
+  }
+}

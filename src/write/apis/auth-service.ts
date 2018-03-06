@@ -1,7 +1,7 @@
 import * as url from 'url';
 import * as querystring from 'querystring';
-import {ErrorWithData} from '../../error';
-import {logger} from '../../logger';
+import {ErrorWithData} from '../../utils/error';
+import {logger} from '../../utils/logger';
 
 const parseLocationHeader = res => {
     const locationHeader = res.headers.get('location');
@@ -23,24 +23,30 @@ const parseErrorFromLocationHeader = locationHeaderParams => {
         } else {
             errorType = 'OTHER';
         }
-        return new ErrorWithData(`${locationHeaderParams.error}: ${locationHeaderParams.error_description}`, {
-            type: errorType,
-            error: locationHeaderParams.error,
-            description: locationHeaderParams.error_description
-        });
+        return new ErrorWithData(
+            `Auth service - ${locationHeaderParams.error}: ${locationHeaderParams.error_description}`,
+            {
+                type: errorType,
+                error: locationHeaderParams.error,
+                description: locationHeaderParams.error_description
+            });
     }
 
     if (!locationHeaderParams.access_token)
-        return new ErrorWithData('No access_token in Location header', {type: 'NO_ACCESS_TOKEN'});
-
+        return new ErrorWithData('Auth service - No access_token in Location header',
+            {type: 'NO_ACCESS_TOKEN'});
     return null;
 };
 
 const checkResponseCode = ({res, apiClientId}) => {
     if (res.status === 400)
-        return new ErrorWithData('Invalid client ID', {type: 'INVALID_CLIENT_ID', clientId: apiClientId});
+        return new ErrorWithData('Auth service - invalid client ID',
+            {type: 'INVALID_CLIENT_ID', clientId: apiClientId}
+        );
     if (res.status !== 302)
-        return new ErrorWithData(`Bad response status=${res.status}`, {type: 'UNEXPECTED_RESPONSE'});
+        return new ErrorWithData(`Auth service - Bad response status=${res.status}`,
+            {type: 'UNEXPECTED_RESPONSE'}
+        );
     return null;
 };
 
@@ -74,7 +80,10 @@ export const getAuthToken = ({session, apiHost, apiClientId}) => {
 
         const locationHeaderParams = parseLocationHeader(res);
         if (!locationHeaderParams)
-            return handleError(reject, new ErrorWithData('Location header missing', {type: 'LOCATION_HEADER_MISSING'}));
+            return handleError(reject, new ErrorWithData(
+                'Location header missing',
+                {type: 'LOCATION_HEADER_MISSING'}
+            ));
 
         const locationHeaderError = parseErrorFromLocationHeader(locationHeaderParams);
         if (locationHeaderError)

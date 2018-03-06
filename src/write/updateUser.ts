@@ -13,26 +13,40 @@ const getUserAndAuthToken = ({session, apiHost, apiClientId}): Promise<[any, any
     ])
 };
 
-const mergeUserUpdateWithFetchedUser = (userUpdate: UserObject, fetchedUser: GraphQlUserApiResponse) => {
-	return{
-		user: mergeObjects(fetchedUser.profile, userUpdate.profile)
-	};
+const mergeUserUpdateWithFetchedUser = ({userUpdate, userApiResponse}: {userUpdate: UserObject, userApiResponse: GraphQlUserApiResponse}) => {
+    if (!userApiResponse.profile || !userUpdate.profile)
+        throw new Error('mergeUserUpdateWithFetchedUser not supplied with valid user object or update');
+    return {
+        user: mergeObjects(userApiResponse.profile, userUpdate.profile)
+    };
 };
 
 export const changeUserPassword = async ({session, apiHost, apiKey, apiClientId, userId, passwordData}) => {
-    const [userApiResponse, authToken] = await getUserAndAuthToken({session, apiHost, apiClientId});
-    const password = await updateUserPasswordApi({userId, passwordData, authToken, apiHost, apiKey});
-    return await userLoginApi({email: userApiResponse.profile.email, password, authToken, apiHost, apiKey})
+    return new Promise(async (resolve, reject) => {
+        try {
+            const [userApiResponse, authToken] = await getUserAndAuthToken({session, apiHost, apiClientId});
+            const password = await updateUserPasswordApi({userId, passwordData, authToken, apiHost, apiKey});
+            resolve(await userLoginApi({email: userApiResponse.profile.email, password, apiHost, apiKey}));
+        } catch (err) {
+            reject(err);
+        }
+    });
 };
 
 export const updateUserProfile = async ({session, apiHost, apiKey, apiClientId, userId, userUpdate}) => {
-	const [userApiResponse, authToken] = await getUserAndAuthToken({session, apiHost, apiClientId});
-	const updateMergedWithFetchedUser = mergeUserUpdateWithFetchedUser(userUpdate, userApiResponse);
-	return await updateUserProfileApi({
-		userId,
-		userUpdate: updateMergedWithFetchedUser,
-		authToken,
-		apiHost,
-        apiKey
-	});
+    return new Promise(async (resolve, reject) => {
+        try {
+            const [userApiResponse, authToken] = await getUserAndAuthToken({session, apiHost, apiClientId});
+            const updateMergedWithFetchedUser = mergeUserUpdateWithFetchedUser({userUpdate, userApiResponse});
+            resolve(await updateUserProfileApi({
+                userId,
+                userUpdate: updateMergedWithFetchedUser,
+                authToken,
+                apiHost,
+                apiKey
+            }));
+        } catch (err) {
+            reject(err);
+        }
+    });
 };
