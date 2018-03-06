@@ -44,3 +44,22 @@ export interface UserObject {
     profile: UserProfileObject,
     subscription: any
 }
+
+export interface GetUserOptions {
+    session: string,
+    demographicsLists?: {
+        positions: SimpleList,
+        industries: SimpleList,
+        responsibilities: SimpleList
+    }
+}
+
+export interface UpdateUserOptions {
+    session: string,
+    apiHost: string,
+    apiKey: string,
+    apiClientId: string,
+    userId: string,
+    passwordData?: any,
+    userUpdate?: any
+}

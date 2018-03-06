@@ -1,26 +1,26 @@
 import {canned} from '@financial-times/n-memb-gql-client';
 import {metrics} from '@financial-times/n-ui';
 import {logger} from '../utils/logger';
-import {GraphQlUserApiResponse} from '../types';
+import {GraphQlUserApiResponse, GetUserOptions} from '../types';
 import * as R from 'ramda';
 import {readTransforms} from './transforms';
 import {ErrorWithData, errorTypes} from '../utils/error';
 
-const handleError = (res, defaultErrorMsg, data) => {
+const handleError = (res: any, defaultErrorMsg: string, data?: any) => {
     let errorMsg = defaultErrorMsg;
     if (res && !res._ok && res.errors.length)
         errorMsg = res.errors[0].message;
-    metrics.count(`graphQl.${data.graphQlQuery}.failure`, 1);
+    if (data.graphQlQuery)
+        metrics.count(`graphQl.${data.graphQlQuery}.failure`, 1);
     const error = new ErrorWithData(errorMsg, {
-        endpoint: data.graphQlQuery,
-        session: data.session,
+        ...data,
         statusCode: 500
     });
     logger.error(errorMsg);
     return error;
 };
 
-const validateOptions = opts => {
+const validateOptions = (opts: GetUserOptions) => {
     const errorData = { type: errorTypes.VALIDATION};
     if (!opts)
         throw new ErrorWithData('Options not supplied', errorData);
@@ -30,7 +30,7 @@ const validateOptions = opts => {
         throw new ErrorWithData('Demographics not supplied', errorData);
 };
 
-export const getUserBySession = (opts: {session: string, demographicsLists?: any}): Promise<GraphQlUserApiResponse> => {
+export const getUserBySession = (opts: GetUserOptions): Promise<GraphQlUserApiResponse> => {
     return new Promise(async (resolve, reject) => {
         let res;
         const graphQlQuery = 'mma-user-by-session';

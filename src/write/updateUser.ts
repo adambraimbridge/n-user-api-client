@@ -4,7 +4,7 @@ import {userLoginApi} from './apis/user-login';
 import {getUserBySession} from '../read/getUser';
 import {getAuthToken} from './apis/auth-service';
 import {mergeObjects} from './transforms/merge-two-objects';
-import {GraphQlUserApiResponse, UserObject} from '../types';
+import {GraphQlUserApiResponse, UpdateUserOptions, UserObject} from '../types';
 
 const getUserAndAuthToken = ({session, apiHost, apiClientId}): Promise<[any, any]> => {
     return Promise.all([
@@ -36,7 +36,7 @@ const validateStringOptions = (opts, dataOption) => {
         throw new Error(`Invalid option(s): ${invalidOptions.join(', ')}`);
 };
 
-export const changeUserPassword = async (opts) => {
+export const changeUserPassword = async (opts: UpdateUserOptions): Promise<any> => {
     return new Promise(async (resolve, reject) => {
         try {
             validateStringOptions(opts, 'passwordData');
@@ -50,7 +50,7 @@ export const changeUserPassword = async (opts) => {
     });
 };
 
-export const updateUserProfile = async (opts) => {
+export const updateUserProfile = async (opts: UpdateUserOptions): Promise<any> => {
     return new Promise(async (resolve, reject) => {
         try {
             validateStringOptions(opts, 'userUpdate');
