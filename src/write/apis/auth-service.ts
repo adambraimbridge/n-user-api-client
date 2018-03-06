@@ -65,30 +65,37 @@ const getFetchOptions = (session: string): RequestInit => ({
 
 export const getAuthToken = ({session, apiHost, apiClientId}) => {
     return new Promise(async (resolve, reject) => {
-        const params = {
-            response_type: 'token',
-            client_id: apiClientId
-        };
+        try {
+            const params = {
+                response_type: 'token',
+                client_id: apiClientId
+            };
 
-        const url = `${apiHost}/authorize?${querystring.stringify(params)}`;
+            const url = `${apiHost}/authorize?${querystring.stringify(params)}`;
 
-        const res = await fetch(url, getFetchOptions(session));
+            const res = await fetch(url, getFetchOptions(session));
 
-        const responseCodeError = checkResponseCode({res, apiClientId});
-        if (responseCodeError)
-            return handleError(reject, responseCodeError);
+            const responseCodeError = checkResponseCode({res, apiClientId});
+            if (responseCodeError)
+                return handleError(reject, responseCodeError);
 
-        const locationHeaderParams = parseLocationHeader(res);
-        if (!locationHeaderParams)
-            return handleError(reject, new ErrorWithData(
-                'Location header missing',
-                {type: 'LOCATION_HEADER_MISSING'}
-            ));
+            const locationHeaderParams = parseLocationHeader(res);
+            if (!locationHeaderParams)
+                return handleError(reject, new ErrorWithData(
+                    'Location header missing',
+                    {type: 'LOCATION_HEADER_MISSING'}
+                ));
 
-        const locationHeaderError = parseErrorFromLocationHeader(locationHeaderParams);
-        if (locationHeaderError)
-            return handleError(reject, locationHeaderError);
+            const locationHeaderError = parseErrorFromLocationHeader(locationHeaderParams);
+            if (locationHeaderError)
+                return handleError(reject, locationHeaderError);
 
-        resolve(locationHeaderParams.access_token)
+            resolve(locationHeaderParams.access_token);
+
+        } catch (err) {
+            return handleError(reject, new ErrorWithData(`getAuthToken - ${err.message}`, {
+                url
+            }));
+        }
     });
 };

@@ -21,8 +21,23 @@ const mergeUserUpdateWithFetchedUser = ({userUpdate, userApiResponse}: {userUpda
     };
 };
 
-export const changeUserPassword = async ({session, apiHost, apiKey, apiClientId, userId, passwordData}) => {
+const validateStringOptions = (opts, dataOption) => {
+    const stringOpts = ['session', 'apiHost', 'apiKey', 'apiClientId', 'userId'];
+    let invalidOptions = [];
+    stringOpts.forEach(stringOpt => {
+        if (typeof opts[stringOpt] !== 'string')
+            invalidOptions.push(stringOpt);
+    });
+    if (typeof opts[dataOption] !== 'object')
+        invalidOptions.push(dataOption);
+    if (invalidOptions.length)
+        throw new Error(`Invalid option(s): ${invalidOptions.join(', ')}`);
+};
+
+export const changeUserPassword = async (opts) => {
     return new Promise(async (resolve, reject) => {
+        validateStringOptions(opts, 'passwordData');
+        const {session, apiHost, apiKey, apiClientId, userId, passwordData} = opts;
         try {
             const [userApiResponse, authToken] = await getUserAndAuthToken({session, apiHost, apiClientId});
             const password = await updateUserPasswordApi({userId, passwordData, authToken, apiHost, apiKey});
@@ -33,8 +48,10 @@ export const changeUserPassword = async ({session, apiHost, apiKey, apiClientId,
     });
 };
 
-export const updateUserProfile = async ({session, apiHost, apiKey, apiClientId, userId, userUpdate}) => {
+export const updateUserProfile = async (opts) => {
     return new Promise(async (resolve, reject) => {
+        validateStringOptions(opts, 'userUpdate');
+        const {session, apiHost, apiKey, apiClientId, userId, userUpdate} = opts;
         try {
             const [userApiResponse, authToken] = await getUserAndAuthToken({session, apiHost, apiClientId});
             const updateMergedWithFetchedUser = mergeUserUpdateWithFetchedUser({userUpdate, userApiResponse});
