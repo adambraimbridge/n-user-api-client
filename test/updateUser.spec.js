@@ -86,7 +86,7 @@ describe('updateUser', () => {
 			nocks.userApi({userId: params.userId});
 			changeUserPassword(params)
 				.catch(err => {
-					expect(err.message).to.equal('Unable to retrieve user for session 123');
+					expect(err.message).to.equal('Unable to retrieve user');
 					done();
 				});
 		});
@@ -121,6 +121,22 @@ describe('updateUser', () => {
 			changeUserPassword(params)
 				.catch(err => {
 					expect(err.message).to.equal('Could not log user in');
+					done();
+				});
+		});
+
+		it('throws if no options supplied', done => {
+			changeUserPassword()
+				.catch(err => {
+					expect(err.message).to.equal('Options not supplied');
+					done();
+				});
+		});
+
+		it('throws if invalid options supplied', done => {
+			changeUserPassword({apiKey: ''})
+				.catch(err => {
+					expect(err.message).to.equal('Invalid option(s): session, apiHost, apiClientId, userId, passwordData');
 					done();
 				});
 		});
@@ -172,7 +188,7 @@ describe('updateUser', () => {
 			nocks.userApi({userId: params.userId});
 			updateUserProfile(params)
 				.catch(err => {
-					expect(err.message).to.equal('Unable to retrieve user for session 123');
+					expect(err.message).to.equal('Unable to retrieve user');
 					done();
 				});
 		});
@@ -208,6 +224,22 @@ describe('updateUser', () => {
 			updateUserProfile(params)
 				.catch(err => {
 					expect(err.message).to.equal('Could not update user');
+					done();
+				});
+		});
+
+		it('throws if no options supplied', done => {
+			updateUserProfile()
+				.catch(err => {
+					expect(err.message).to.equal('Options not supplied');
+					done();
+				});
+		});
+
+		it('throws if invalid options supplied', done => {
+			updateUserProfile({userUpdate: ''})
+				.catch(err => {
+					expect(err.message).to.equal('Invalid option(s): session, apiHost, apiKey, apiClientId, userId, userUpdate');
 					done();
 				});
 		});

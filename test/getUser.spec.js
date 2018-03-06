@@ -17,7 +17,23 @@ describe('getUser', () => {
 			nocks.graphQlUserBySession({ statusCode: 500 });
 			return getUserBySession({ session, demographicsLists })
 				.catch(err =>
-					expect(err.message).to.equal('Unable to retrieve user for session 123'));
+					expect(err.message).to.equal('Unable to retrieve user'));
+		});
+
+		it('throws if no session supplied', done => {
+			getUserBySession({})
+				.catch(err => {
+					expect(err.message).to.equal('Session not supplied');
+					done();
+				});
+		});
+
+		it('throws if valid demographics lists not supplied', done => {
+			getUserBySession({ session: '123', demographicsLists: [] })
+				.catch(err => {
+					expect(err.message).to.equal('Demographics not supplied');
+					done();
+				});
 		});
 	});
 
@@ -32,7 +48,15 @@ describe('getUser', () => {
 			nocks.graphQlUserIdBySession({statusCode: 500});
 			return getUserIdBySession(session)
 				.catch(err =>
-					expect(err.message).to.equal('Unable to retrieve userId for session 123'));
+					expect(err.message).to.equal('Unable to retrieve userId'));
+		});
+
+		it('throws if no session supplied', done => {
+			getUserIdBySession()
+				.catch(err => {
+					expect(err.message).to.equal('Session not supplied');
+					done();
+				});
 		});
 	});
 
