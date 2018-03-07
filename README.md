@@ -1,5 +1,27 @@
 A client to access the [User API on the FT Membership Platform](https://developer.ft.com/portal/docs-membership-platform-api)
 
+## Installation
+
+```
+npm i @financial-times/n-user-api-client --save
+```
+
+## Usage example
+
+```
+import {updateUserProfile} from '@financial-times/n-user-api-client';
+
+await updateUserProfile({
+    session: 'abc123',
+    userId: 'def456',
+    apiHost: process.env['MEMBERSHIP_API_HOST_PROD'],
+    apiKey: process.env['MEMBERSHIP_API_KEY_PROD'],
+    apiClientId: process.env['AUTH_API_CLIENT_ID_PROD'],
+    userUpdate: { ... }
+})
+
+```
+
 ## Public methods
 
 ### getUserBySession
