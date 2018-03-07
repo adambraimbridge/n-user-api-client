@@ -125,6 +125,17 @@ describe('updateUser', () => {
 				});
 		});
 
+		it('handles error if session is expired', done => {
+			nocks.graphQlUserBySession({ responseType: 'subscribed' });
+			nocks.authApi({ expiredSession: true });
+			nocks.userApi();
+			changeUserPassword(params)
+				.catch(err => {
+					expect(err.message).to.equal('Auth service - No access_token in Location header');
+					done();
+				});
+		});
+
 		it('throws if no options supplied', done => {
 			changeUserPassword()
 				.catch(err => {
@@ -200,6 +211,17 @@ describe('updateUser', () => {
 			updateUserProfile(params)
 				.catch(err => {
 					expect(err.message).to.equal('Auth service - Bad response status=500');
+					done();
+				});
+		});
+
+		it('handles error if session is expired', done => {
+			nocks.graphQlUserBySession({ responseType: 'subscribed' });
+			nocks.authApi({ expiredSession: true });
+			nocks.userApi();
+			updateUserProfile(params)
+				.catch(err => {
+					expect(err.message).to.equal('Auth service - No access_token in Location header');
 					done();
 				});
 		});

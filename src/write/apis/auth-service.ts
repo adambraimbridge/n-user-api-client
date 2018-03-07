@@ -68,7 +68,8 @@ export const getAuthToken = ({session, apiHost, apiClientId}) => {
         try {
             const params = {
                 response_type: 'token',
-                client_id: apiClientId
+                client_id: apiClientId,
+                scope: 'profile_max'
             };
 
             const url = `${apiHost}/authorize?${querystring.stringify(params)}`;

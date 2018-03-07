@@ -49,9 +49,10 @@ const nocks = {
 			.reply(statusCode, response);
 	},
 
-	authApi: ({ statusCode = 302 } = {}) => {
+	authApi: ({ statusCode = 302, expiredSession = false } = {}) => {
+		const result = expiredSession ? '#error=invalid_scope&error_description=Cannot%20acquire%20valid%20scope.' : 'access_token=a1b2c3';
 		let authApiNock = nock('https://api.ft.com')
-			.defaultReplyHeaders({ Location: 'https://ft.com/signup/upgrade#access_token=a1b2c3' })
+			.defaultReplyHeaders({ Location: `https://www.ft.com/preferences#${result}` })
 			.get('/authorize')
 			.query(true)
 			.reply(statusCode, function () {
