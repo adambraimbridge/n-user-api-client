@@ -1,7 +1,4 @@
-import * as fs from 'fs';
-
-const demographicsFile = fs.readFileSync(`${process.cwd()}/src/read/demographics-data/demographics.json`);
-const demographics = JSON.parse(demographicsFile.toString('utf8'));
+const demographics = require('../../../demographics-data/demographics.json');
 
 export const filterDemographicsLists = () => ({
     positions: demographics.positions.filter(item => item.active),
