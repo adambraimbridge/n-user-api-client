@@ -55,8 +55,13 @@ userId (string)
 
 userUpdate - a [user object](https://developer.ft.com/portal/docs-membership-platform-api-user-profile-request-resource). It will be merged into a fresh copy of the user's record retrieved from the database
 
+#### Return value
+
+The updated user object
+
 ### changeUserPassword
 
+#### Arguments
 session (string) - a valid user session ID. If stale (> 30 minutes old) then a valid authorization API token won't be returned and the overall request will fail
 
 apiHost, apiKey, apiClientId - the consumer app should pass these in, based on Vault env vars
@@ -64,6 +69,10 @@ apiHost, apiKey, apiClientId - the consumer app should pass these in, based on V
 userId (string)
 
 passwordData (object) - in [this format](https://developer.ft.com/portal/docs-membership-platform-api-user-api-post-users-userid-credentials-change-password)
+
+#### Return value
+
+If successful, the user will be reauthenticated and the [fresh session data](https://developer.ft.com/portal/docs-membership-platform-api-post-login) will be returned.
 
 ## Build
 
