@@ -1,9 +1,7 @@
 import {userName} from './user-name';
 import {addListsToUserData} from "./add-lists-to-user-data";
 
-export const readTransforms = (user, demographicsLists) => {
+export const readTransforms = (user) => {
     let transformed = userName(user);
-    if (demographicsLists)
-        return addListsToUserData(transformed, demographicsLists);
-    return transformed;
+    return addListsToUserData(transformed);
 };

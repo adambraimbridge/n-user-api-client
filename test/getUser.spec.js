@@ -1,6 +1,5 @@
 const {expect} = require('chai');
 const {getUserBySession, getUserIdBySession} = require('../dist/read/getUser');
-const demographicsLists = require('./transforms/demographics-lists.json');
 const nocks = require('./nocks');
 
 describe('getUser', () => {
@@ -9,29 +8,21 @@ describe('getUser', () => {
 	describe('getUserBySession', () => {
 		it('resolves with a transformed user object when successful', async () => {
 			nocks.graphQlUserBySession({ responseType: 'subscribed' });
-			const user = await getUserBySession({session, demographicsLists});
+			const user = await getUserBySession(session);
 			expect(user.profile.firstName).to.equal('John');
 		});
 
 		it('handles exception thrown within canned query', async () => {
 			nocks.graphQlUserBySession({ statusCode: 500 });
-			return getUserBySession({ session, demographicsLists })
+			return getUserBySession(session)
 				.catch(err =>
 					expect(err.message).to.equal('Unable to retrieve user'));
 		});
 
 		it('throws if no session supplied', done => {
-			getUserBySession({})
+			getUserBySession()
 				.catch(err => {
 					expect(err.message).to.equal('Session not supplied');
-					done();
-				});
-		});
-
-		it('throws if valid demographics lists not supplied', done => {
-			getUserBySession({ session: '123', demographicsLists: [] })
-				.catch(err => {
-					expect(err.message).to.equal('Demographics not supplied');
 					done();
 				});
 		});

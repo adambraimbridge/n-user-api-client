@@ -45,15 +45,6 @@ export interface UserObject {
     subscription: any
 }
 
-export interface GetUserOptions {
-    session: string,
-    demographicsLists?: {
-        positions: SimpleList,
-        industries: SimpleList,
-        responsibilities: SimpleList
-    }
-}
-
 export interface UpdateUserOptions {
     session: string,
     apiHost: string,
@@ -62,4 +53,9 @@ export interface UpdateUserOptions {
     userId: string,
     passwordData?: any,
     userUpdate?: any
+}
+
+declare module "*.json" {
+    const value: any;
+    export default value;
 }

@@ -8,7 +8,7 @@ import {GraphQlUserApiResponse, UpdateUserOptions, UserObject} from '../types';
 
 const getUserAndAuthToken = ({session, apiHost, apiClientId}): Promise<[any, any]> => {
     return Promise.all([
-        getUserBySession({session}),
+        getUserBySession(session),
         getAuthToken({session, apiHost, apiClientId})
     ])
 };

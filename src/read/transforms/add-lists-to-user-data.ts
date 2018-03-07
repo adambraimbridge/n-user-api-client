@@ -12,8 +12,8 @@ const selectValueInList = (list: SimpleList, userValue: string): SimpleList => {
     }));
 };
 
-export const addListsToUserData = (userData, demographicsLists) => {
-    const demographics = filterDemographicsLists(demographicsLists);
+export const addListsToUserData = userData => {
+    const demographics = filterDemographicsLists();
     return R.mergeDeepWith(
         (a, b) => b ? b : a,
         userData,

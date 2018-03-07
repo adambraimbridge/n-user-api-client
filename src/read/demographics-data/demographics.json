@@ -151,113 +151,6 @@
       "description": "Travel & leisure"
     }
   ],
-  "positions": [
-    {
-      "code": "AN",
-      "active": true,
-      "description": "Analyst"
-    },
-    {
-      "code": "AS",
-      "active": true,
-      "description": "Associate"
-    },
-    {
-      "code": "BR",
-      "active": false,
-      "description": "Broker/Trader/Advisor"
-    },
-    {
-      "code": "BU",
-      "active": true,
-      "description": "Business School Academic"
-    },
-    {
-      "code": "CP",
-      "active": true,
-      "description": "CEO/president/Chairman"
-    },
-    {
-      "code": "CS",
-      "active": true,
-      "description": "Consultant"
-    },
-    {
-      "code": "DT",
-      "active": false,
-      "description": "Diplomat/Sen Govt Officer"
-    },
-    {
-      "code": "OE",
-      "active": true,
-      "description": "Exec Mgmt (EVP/SVP/MD)"
-    },
-    {
-      "code": "GI",
-      "active": false,
-      "description": "Gov't/Int'l org official"
-    },
-    {
-      "code": "MB",
-      "active": true,
-      "description": "MBA Student"
-    },
-    {
-      "code": "MA",
-      "active": true,
-      "description": "Manager/Supervisor"
-    },
-    {
-      "code": "OT",
-      "active": false,
-      "description": "Other"
-    },
-    {
-      "code": "MD",
-      "active": true,
-      "description": "Other C Level (CFO/COO/CIO/CMO)"
-    },
-    {
-      "code": "OP",
-      "active": true,
-      "description": "Owner/Partner/Proprietor"
-    },
-    {
-      "code": "PO",
-      "active": false,
-      "description": "Politician/Government Minister"
-    },
-    {
-      "code": "PR",
-      "active": true,
-      "description": "Professional"
-    },
-    {
-      "code": "PM",
-      "active": true,
-      "description": "Programme/Project Manager"
-    },
-    {
-      "code": "SE",
-      "active": true,
-      "description": "Secretary/Treasurer"
-    },
-    {
-      "code": "SM",
-      "active": true,
-      "description": "Senior Manager/Dept Head"
-    },
-    {
-      "code": "TS",
-      "active": true,
-      "description": "Technical/Business Specialist"
-    },
-    {
-      "code": "DH",
-      "active": true,
-      "description": "VP/Director"
-    }
-  ],
   "responsibilities": [
     {
       "code": "FIN",
@@ -394,6 +287,114 @@
       "active": false,
       "description": "Telecommunications"
     }
+  ],
+  "positions": [
+    {
+      "code": "AN",
+      "active": true,
+      "description": "Analyst"
+    },
+    {
+      "code": "AS",
+      "active": true,
+      "description": "Associate"
+    },
+    {
+      "code": "BR",
+      "active": false,
+      "description": "Broker/Trader/Advisor"
+    },
+    {
+      "code": "BU",
+      "active": true,
+      "description": "Business School Academic"
+    },
+    {
+      "code": "CP",
+      "active": true,
+      "description": "CEO/president/Chairman"
+    },
+    {
+      "code": "CS",
+      "active": true,
+      "description": "Consultant"
+    },
+    {
+      "code": "DT",
+      "active": false,
+      "description": "Diplomat/Sen Govt Officer"
+    },
+    {
+      "code": "OE",
+      "active": true,
+      "description": "Exec Mgmt (EVP/SVP/MD)"
+    },
+    {
+      "code": "GI",
+      "active": false,
+      "description": "Gov't/Int'l org official"
+    },
+    {
+      "code": "MB",
+      "active": true,
+      "description": "MBA Student"
+    },
+    {
+      "code": "MA",
+      "active": true,
+      "description": "Manager/Supervisor"
+    },
+    {
+      "code": "OT",
+      "active": false,
+      "description": "Other"
+    },
+    {
+      "code": "MD",
+      "active": true,
+      "description": "Other C Level (CFO/COO/CIO/CMO)"
+    },
+    {
+      "code": "OP",
+      "active": true,
+      "description": "Owner/Partner/Proprietor"
+    },
+    {
+      "code": "PO",
+      "active": false,
+      "description": "Politician/Government Minister"
+    },
+    {
+      "code": "PR",
+      "active": true,
+      "description": "Professional"
+    },
+    {
+      "code": "PM",
+      "active": true,
+      "description": "Programme/Project Manager"
+    },
+    {
+      "code": "SE",
+      "active": true,
+      "description": "Secretary/Treasurer"
+    },
+    {
+      "code": "SM",
+      "active": true,
+      "description": "Senior Manager/Dept Head"
+    },
+    {
+      "code": "TS",
+      "active": true,
+      "description": "Technical/Business Specialist"
+    },
+    {
+      "code": "DH",
+      "active": true,
+      "description": "VP/Director"
+    }
   ]
 }
+
 
