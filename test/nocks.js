@@ -46,6 +46,8 @@ const getUserIdAndSessionDataResponse = ({statusCode, isStale, isValidUserId}) =
 
 const nocks = {
 	userIdBySession: ({ statusCode=200, session, isStale=false, isValidUserId=true } = {}) => {
+		if (!session)
+			throw new Error('userIdBySession nock requires a session argument');
 		const response = getUserIdAndSessionDataResponse({statusCode, isStale, isValidUserId});
 		return nock('https://api.ft.com')
 			.get(`/sessions/s/${session}`)
