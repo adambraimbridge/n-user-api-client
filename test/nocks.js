@@ -2,11 +2,14 @@ const nock = require('nock');
 
 const responses = {
 	userIdBySessionSuccess: {
-		data: {
-			userBySession: {
-				id: '123'
-			}
-		}
+		uuid: 'user-456',
+		creationTime: Date.now() - (1000 * 60 * 29)
+	},
+	userIdBySessionInvalid: {
+	},
+	userIdBySessionStale: {
+		uuid: 'user-456',
+		creationTime: Date.now() - (1000 * 60 * 31)
 	},
 	genericError: {
 		errors: [{
@@ -31,18 +34,27 @@ const getResponse = (statusCode, responseType) => {
 	return response;
 };
 
+const getUserIdAndSessionDataResponse = ({statusCode, isStale, isValidUserId}) => {
+	if (statusCode !== 200)
+		return responses.genericError;
+	if (isStale)
+		return responses.userIdBySessionStale;
+	if (!isValidUserId)
+		return responses.userIdBySessionInvalid;
+	return responses.userIdBySessionSuccess;
+};
+
 const nocks = {
-	graphQlUserIdBySession: ({ statusCode = 200 } = {}) => {
-		const response = statusCode === 200 ? { data: { userBySession: { id: 'user-456' } } } : {};
+	userIdBySession: ({ statusCode=200, session, isStale=false, isValidUserId=true } = {}) => {
+		const response = getUserIdAndSessionDataResponse({statusCode, isStale, isValidUserId});
 		return nock('https://api.ft.com')
-			.get('/memb-query/api/user-id-by-session')
+			.get(`/sessions/s/${session}`)
 			.query(true)
 			.reply(statusCode, response);
 	},
 
 	graphQlUserBySession: ({ responseType, statusCode = 200 }) => {
 		const response = getResponse(statusCode, responseType);
-
 		return nock('https://api.ft.com')
 			.get('/memb-query/api/mma-user-by-session')
 			.query(true)

@@ -1,5 +1,5 @@
 const {expect} = require('chai');
-const {getUserBySession, getUserIdBySession} = require('../dist/read/getUser');
+const {getUserBySession, getUserIdAndSessionData} = require('../dist/read/getUser');
 const nocks = require('./nocks');
 
 describe('getUser', () => {
@@ -28,25 +28,75 @@ describe('getUser', () => {
 		});
 	});
 
-	describe('getUserIdBySession', () => {
+	describe('getUserIdAndSessionData', () => {
+		const params = {
+			session,
+			apiHost: 'https://api.ft.com',
+			apiKey: 'apiKey'
+		};
+		
 		it('resolves with a user ID when successful', async () => {
-			nocks.graphQlUserIdBySession();
-			const userId = await getUserIdBySession(session);
-			expect(userId).to.equal('user-456');
+			nocks.userIdBySession({session: params.session});
+			const sessionData = await getUserIdAndSessionData(params);
+			expect(sessionData.userId).to.equal('user-456');
 		});
 
-		it('handles exception thrown within canned query', async () => {
-			nocks.graphQlUserIdBySession({statusCode: 500});
-			return getUserIdBySession(session)
+		it('indicates if the session is stale', async () => {
+			nocks.userIdBySession({session: params.session, isStale: true});
+			const sessionData = await getUserIdAndSessionData(params);
+			expect(sessionData.isSessionStale).to.equal(true);
+		});
+
+		it('indicates if the session is not stale', async () => {
+			nocks.userIdBySession({session: params.session});
+			const sessionData = await getUserIdAndSessionData(params);
+			expect(sessionData.isSessionStale).to.equal(false);
+		});
+
+		it('throws if a valid user ID not returned', async () => {
+			nocks.userIdBySession({session: params.session, isValidUserId: false});
+			return getUserIdAndSessionData(params)
 				.catch(err =>
-					expect(err.message).to.equal('Unable to retrieve userId'));
+					expect(err.message).to.equal('Valid user ID not returned'));
+		});
+
+		it('handles exception thrown by session API fetch', async () => {
+			nocks.userIdBySession({session: params.session, statusCode: 500});
+			return getUserIdAndSessionData(params)
+				.catch(err =>
+					expect(err.message).to.equal('Could not get session data'));
 		});
 
 		it('throws if no session supplied', done => {
-			getUserIdBySession()
+			getUserIdAndSessionData({apiHost: '1', apiKey: '2'})
 				.catch(err => {
-					expect(err.message).to.equal('Session not supplied');
+					expect(err.message).to.equal('Invalid option(s): session');
 					done();
+				});
+		});
+
+		it('throws if no API host supplied', done => {
+			getUserIdAndSessionData({session: '1', apiKey: '2'})
+				.catch(err => {
+					expect(err.message).to.equal('Invalid option(s): apiHost');
+					done();
+				});
+		});
+
+		it('throws if no API key supplied', done => {
+			getUserIdAndSessionData({apiHost: '1', session: '2'})
+				.catch(err => {
+					expect(err.message).to.equal('Invalid option(s): apiKey');
+					done();
+				});
+		});
+
+		it('throws if an invalid API key is used', async () => {
+			nocks.userIdBySession({session: params.session, statusCode: 403});
+			return getUserIdAndSessionData(params)
+				.catch(err => {
+					expect(err.data.statusCode).to.equal(403);
+					expect(err.message).to.equal('Could not get session data');
 				});
 		});
 	});

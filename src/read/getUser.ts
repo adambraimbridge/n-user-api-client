@@ -5,8 +5,9 @@ import {GraphQlUserApiResponse} from '../types';
 import * as R from 'ramda';
 import {readTransforms} from './transforms';
 import {ErrorWithData, errorTypes} from '../utils/error';
+import {getSessionData} from './apis/session-service';
 
-const handleError = (res: any, defaultErrorMsg: string, data?: any) => {
+const handleGraphQlError = (res: any, defaultErrorMsg: string, data?: any) => {
     let errorMsg = defaultErrorMsg;
     if (res && !res._ok && res.errors.length)
         errorMsg = res.errors[0].message;
@@ -18,6 +19,19 @@ const handleError = (res: any, defaultErrorMsg: string, data?: any) => {
     });
     logger.error(errorMsg);
     return error;
+};
+
+const validateStringOptions = (opts) => {
+    if (!opts)
+        throw new Error('Options not supplied');
+    const stringOpts = ['session', 'apiHost', 'apiKey'];
+    let invalidOptions = [];
+    stringOpts.forEach(stringOpt => {
+        if (typeof opts[stringOpt] !== 'string')
+            invalidOptions.push(stringOpt);
+    });
+    if (invalidOptions.length)
+        throw new Error(`Invalid option(s): ${invalidOptions.join(', ')}`);
 };
 
 export const getUserBySession = (session: string): Promise<GraphQlUserApiResponse> => {
@@ -35,7 +49,7 @@ export const getUserBySession = (session: string): Promise<GraphQlUserApiRespons
             }
         } catch (err) {
             let defaultErrorMsg = err.data && err.data.type === errorTypes.VALIDATION ? err.message : 'Unable to retrieve user';
-            const error = handleError(res, defaultErrorMsg, {
+            const error = handleGraphQlError(res, defaultErrorMsg, {
                 graphQlQuery, err
             });
             reject(error);
@@ -43,23 +57,13 @@ export const getUserBySession = (session: string): Promise<GraphQlUserApiRespons
     });
 };
 
-export const getUserIdBySession = (session: string): Promise<any> => {
+export const getUserIdAndSessionData = (opts): Promise<any> => {
     return new Promise(async (resolve, reject) => {
-        const graphQlQuery = 'user-id-by-session';
-        let res;
         try {
-            if (!session)
-                throw new ErrorWithData('Session not supplied', { type: errorTypes.VALIDATION});
-            res = await canned(graphQlQuery, {session}, {timeout: 5000});
-            const userId = R.path(['data', 'userBySession', 'id'], res);
-            if (userId)
-                return resolve(userId);
+            validateStringOptions(opts);
+            return resolve(getSessionData(opts));
         } catch (err) {
-            let defaultErrorMsg = err.data && err.data.type === errorTypes.VALIDATION ? err.message : 'Unable to retrieve userId';
-            const error = handleError(res, defaultErrorMsg, {
-                graphQlQuery, err, session
-            });
-            reject(error);
+            reject(err);
         }
     });
 };

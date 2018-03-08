@@ -21,7 +21,7 @@ const mergeUserUpdateWithFetchedUser = ({userUpdate, userApiResponse}: {userUpda
     };
 };
 
-const validateStringOptions = (opts, dataOption) => {
+const validateOptions = (opts, dataOption) => {
     if (!opts)
         throw new Error('Options not supplied');
     const stringOpts = ['session', 'apiHost', 'apiKey', 'apiClientId', 'userId'];
@@ -39,7 +39,7 @@ const validateStringOptions = (opts, dataOption) => {
 export const changeUserPassword = async (opts: UpdateUserOptions): Promise<any> => {
     return new Promise(async (resolve, reject) => {
         try {
-            validateStringOptions(opts, 'passwordData');
+            validateOptions(opts, 'passwordData');
             const {session, apiHost, apiKey, apiClientId, userId, passwordData} = opts;
             const [userApiResponse, authToken] = await getUserAndAuthToken({session, apiHost, apiClientId});
             const password = await updateUserPasswordApi({userId, passwordData, authToken, apiHost, apiKey});
@@ -53,7 +53,7 @@ export const changeUserPassword = async (opts: UpdateUserOptions): Promise<any> 
 export const updateUserProfile = async (opts: UpdateUserOptions): Promise<any> => {
     return new Promise(async (resolve, reject) => {
         try {
-            validateStringOptions(opts, 'userUpdate');
+            validateOptions(opts, 'userUpdate');
             const {session, apiHost, apiKey, apiClientId, userId, userUpdate} = opts;
             const [userApiResponse, authToken] = await getUserAndAuthToken({session, apiHost, apiClientId});
             const updateMergedWithFetchedUser = mergeUserUpdateWithFetchedUser({userUpdate, userApiResponse});

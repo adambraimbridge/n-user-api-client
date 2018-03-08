@@ -35,10 +35,12 @@ demographicsLists (object) - optional - lists of demographics data eg positions,
 
 A 'user object' with profile and subscription sections
 
-### getUserIdBySession
+### getUserIdAndSessionData
 #### Arguments
 
 session (string) - a valid user session ID. If stale (> 30 minutes old) then the returned user data will be redacted, some fields including address will be null
+
+apiHost, apiKey - the consumer app should pass these in, based on Vault env vars
 
 #### Return value
 
