@@ -5,6 +5,7 @@ import * as R from 'ramda';
 import { readTransforms } from './transforms';
 import { ErrorWithData, errorTypes } from '../utils/error';
 import { getSessionData } from './apis/session-service';
+import { validateOptions } from '../utils/validate';
 
 const handleGraphQlError = (res: any, defaultErrorMsg: string, data?: any): Error => {
 	let errorMsg = defaultErrorMsg;
@@ -17,22 +18,6 @@ const handleGraphQlError = (res: any, defaultErrorMsg: string, data?: any): Erro
 	});
 	logger.error(errorMsg);
 	return error;
-};
-
-const validateStringOptions = opts => {
-	if (!opts) {
-		throw new Error('Options not supplied');
-	}
-	const stringOpts = ['session', 'apiHost', 'apiKey'];
-	let invalidOptions = [];
-	stringOpts.forEach(stringOpt => {
-		if (typeof opts[stringOpt] !== 'string') {
-			invalidOptions.push(stringOpt);
-		}
-	});
-	if (invalidOptions.length) {
-		throw new Error(`Invalid option(s): ${invalidOptions.join(', ')}`);
-	}
 };
 
 export const getUserBySession = async (session: string): Promise<GraphQlUserApiResponse> => {
@@ -63,6 +48,6 @@ export const getUserBySession = async (session: string): Promise<GraphQlUserApiR
 };
 
 export const getUserIdAndSessionData = async (opts): Promise<any> => {
-	validateStringOptions(opts);
+	validateOptions(opts, null, ['session', 'apiHost', 'apiKey']);
 	return await getSessionData(opts);
 };

@@ -37,13 +37,13 @@ export class PlatformAPI {
 		});
 	}
 
-	private get apiHost(): string {
+	private get apiHost(): string | undefined {
 		return PlatformAPI.guardEnvironmentVariable(
 			`MEMBERSHIP_API_HOST_${this.mode}`
 		);
 	}
 
-	private get apiKey(): string {
+	private get apiKey(): string | undefined {
 		return PlatformAPI.guardEnvironmentVariable(
 			`MEMBERSHIP_API_KEY_${this.mode}`
 		);

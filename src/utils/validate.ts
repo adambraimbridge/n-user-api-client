@@ -1,8 +1,8 @@
-export const validateOptions = (opts, dataOption, stringOpts = []) => {
+export const validateOptions = (opts, dataOption, stringOpts: Array<string> = []) => {
 	if (!opts) {
 		throw new Error('Options not supplied');
 	}
-	let invalidOptions = [];
+	let invalidOptions = [] as string[];
 	stringOpts.forEach(stringOpt => {
 		if (typeof opts[stringOpt] !== 'string') {
 			invalidOptions.push(stringOpt);

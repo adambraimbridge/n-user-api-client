@@ -84,7 +84,7 @@ const handleError = (reject, err) => {
 	return reject(err);
 };
 
-export const getAuthToken = async ({ session, apiHost, apiClientId }) => {
+export const getAuthToken = async ({ session, apiHost, apiClientId }): Promise<any> => {
 	const params = {
 		response_type: 'token',
 		client_id: apiClientId,
