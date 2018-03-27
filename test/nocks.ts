@@ -72,7 +72,7 @@ export const nocks = {
 			.defaultReplyHeaders({
 				Location: `https://www.ft.com/preferences#${result}`
 			})
-			.get('/authorize')
+			.get('/idm/v1/authorize')
 			.query(true)
 			.reply(statusCode, function () {
 				authApiNock.request = this.req;
