@@ -7,42 +7,35 @@ import { ErrorWithData, errorTypes } from '../utils/error';
 import { getSessionData } from './apis/session-service';
 import { validateOptions } from '../utils/validate';
 
-const handleGraphQlError = (res: any, defaultErrorMsg: string, data?: any): Error => {
-	let errorMsg = defaultErrorMsg;
-	if (res && !res._ok && res.errors.length) {
-		errorMsg = res.errors[0].message;
-	}
-	const error = new ErrorWithData(errorMsg, {
-		...data,
-		statusCode: 500
-	});
-	logger.error(errorMsg);
-	return error;
-};
-
 export const getUserBySession = async (session: string): Promise<GraphQlUserApiResponse> => {
-	let res;
+	const defaultErrorMessage = 'Unable to retrieve user';
 	const graphQlQuery = 'mma-user-by-session';
 	try {
 		if (!session) {
 			throw new ErrorWithData('Session not supplied', {
+				statusCode: 500,
 				type: errorTypes.VALIDATION
 			});
 		}
-		res = await canned(graphQlQuery, { session }, { timeout: 10000 });
+		const res = await canned(graphQlQuery, { session }, { timeout: 10000 });
 		const user = R.path(['data', 'user'], res);
-		if (user) {
-			const transformed = readTransforms(user);
-			return transformed;
+		if (!res._ok || !user) {
+			throw new ErrorWithData(defaultErrorMessage, {
+				statusCode: res.status,
+				type: errorTypes.API,
+				errors: res.errors
+			});
 		}
+		const transformed = readTransforms(user);
+		return transformed;
 	} catch (error) {
-		const errorMsg =
-			error.data && error.data.type === errorTypes.VALIDATION
-				? error.message
-				: 'Unable to retrieve user';
-		throw handleGraphQlError(res, errorMsg, {
-			graphQlQuery,
-			error
+		const errorMsg = error.data
+			? error.message
+			: defaultErrorMessage;
+
+		throw new ErrorWithData(errorMsg, error.data || {
+			statusCode: 500,
+			type: errorTypes.API
 		});
 	}
 };
