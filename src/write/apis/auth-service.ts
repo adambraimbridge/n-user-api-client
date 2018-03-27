@@ -5,14 +5,22 @@ import * as querystring from 'querystring';
 import { apiErrorType, ErrorWithData } from '../../utils/error';
 import { logger } from '../../utils/logger';
 
-const parseLocationHeader = res => {
+const parseLocationHeader = (res): querystring.ParsedUrlQuery | null => {
 	const locationHeader = res.headers.get('location');
-	if (!locationHeader) return null;
+	if (!locationHeader) {
+		return null;
+	}
 	const hash = url.parse(locationHeader).hash.replace(/^#/, '');
 	return querystring.parse(hash);
 };
 
-const parseErrorFromLocationHeader = locationHeaderParams => {
+const parseErrorFromLocationHeader = (locationHeaderParams): Error | null => {
+	if(!locationHeaderParams) {
+		return new ErrorWithData('Auth service - Location header missing', {
+			type: 'LOCATION_HEADER_MISSING'
+		});
+	}
+
 	if (locationHeaderParams.error) {
 		let errorType;
 		if (locationHeaderParams.error_description.startsWith('Missing ')) {
@@ -42,22 +50,24 @@ const parseErrorFromLocationHeader = locationHeaderParams => {
 			{ type: 'NO_ACCESS_TOKEN' }
 		);
 	}
+
 	return null;
 };
 
-const checkResponseCode = ({ res, apiClientId }): Error => {
-	if (res.status === 400) {
-		return new ErrorWithData('Auth service - invalid client ID', {
+const checkResponseCode = ({ status: statusCode }, apiClientId: string): Error | null => {
+	if (statusCode === 400) {
+		return new ErrorWithData('Auth service - Invalid client ID', {
 			type: 'INVALID_CLIENT_ID',
 			clientId: apiClientId
 		});
 	}
-	if (res.status !== 302) {
+	if (statusCode !== 302) {
 		return new ErrorWithData(
-			`Auth service - Bad response status=${res.status}`,
+			`Auth service - Bad response status=${statusCode}`,
 			{ type: 'UNEXPECTED_RESPONSE' }
 		);
 	}
+	return null;
 };
 
 const getFetchOptions = (session: string): RequestInit => ({
@@ -75,80 +85,63 @@ const handleError = (reject, err) => {
 };
 
 export const getAuthToken = async ({ session, apiHost, apiClientId }) => {
-	// const params = {
-	// 	response_type: 'token',
-	// 	client_id: apiClientId,
-	// 	scope: 'profile_max'
-	// };
+	const params = {
+		response_type: 'token',
+		client_id: apiClientId,
+		scope: 'profile_max'
+	};
 
-	// const url = `${apiHost}/authorize?${querystring.stringify(params)}`;
+	const url = `${apiHost}/authorize?${querystring.stringify(params)}`;
 
-	// try {
-	// 	const res = await fetch(url, getFetchOptions(session));
-	// 	if(!res.ok) {
-	// 		throw checkResponseCode({ res, apiClientId });
+	try {
+		const res = await fetch(url, getFetchOptions(session));
+
+		const responseCodeError = checkResponseCode(res, apiClientId);
+		if (responseCodeError) throw responseCodeError;
+
+		const locationHeaderParams = parseLocationHeader(res);
+		const locationHeaderError = parseErrorFromLocationHeader(
+			locationHeaderParams
+		);
+		if (locationHeaderError) throw locationHeaderError;
+
+		return locationHeaderParams.access_token;
+	} catch (error) {
+		logger.error(error);
+		throw new ErrorWithData(`getAuthToken - ${error.message}`, {
+			url, 
+			error
+		});
+	}
+
+	// return new Promise(async (resolve, reject) => {
+	// 	try {
+	// 		const res = await fetch(url, getFetchOptions(session));
+
+	// 		const responseCodeError = checkResponseCode(res, apiClientId);
+	// 		if (responseCodeError) throw responseCodeError;
+
+	// 		const locationHeaderParams = parseLocationHeader(res);
+	// 		if (!locationHeaderParams)
+	// 			throw new ErrorWithData('Location header missing', {
+	// 					type: 'LOCATION_HEADER_MISSING'
+	// 				})
+	// 			);
+
+	// 		const locationHeaderError = parseErrorFromLocationHeader(
+	// 			locationHeaderParams
+	// 		);
+	// 		if (locationHeaderError) return handleError(reject, locationHeaderError);
+
+	// 		resolve(locationHeaderParams.access_token);
+	// 	} catch (err) {
+	// 		console.log(err);
+	// 		return handleError(
+	// 			reject,
+	// 			new ErrorWithData(`getAuthToken - ${err.message}`, {
+	// 				url
+	// 			})
+	// 		);
 	// 	}
-
-	// 	const locationHeaderParams = parseLocationHeader(res);
-	// 	if (!locationHeaderParams) {
-	// 		throw new ErrorWithData('Location header missing', {
-	// 			type: 'LOCATION_HEADER_MISSING'
-	// 		});
-	// 	}
-
-	// 	const locationHeaderError = parseErrorFromLocationHeader(
-	// 		locationHeaderParams
-	// 	);
-	// 	if (locationHeaderError) {
-	// 		throw locationHeaderError;
-	// 	} 
-
-	// 	return locationHeaderParams.access_token;
-	// } catch (error) {
-	// 	logger.error(error);
-	// 	throw new ErrorWithData(`getAuthToken - ${error.message}`, {
-	// 		url, 
-	// 		error
-	// 	});
-	// }
-
-	return new Promise(async (resolve, reject) => {
-		try {
-			const params = {
-				response_type: 'token',
-				client_id: apiClientId,
-				scope: 'profile_max'
-			};
-
-			const url = `${apiHost}/authorize?${querystring.stringify(params)}`;
-
-			const res = await fetch(url, getFetchOptions(session));
-
-			const responseCodeError = checkResponseCode({ res, apiClientId });
-			if (responseCodeError) return handleError(reject, responseCodeError);
-
-			const locationHeaderParams = parseLocationHeader(res);
-			if (!locationHeaderParams)
-				return handleError(
-					reject,
-					new ErrorWithData('Location header missing', {
-						type: 'LOCATION_HEADER_MISSING'
-					})
-				);
-
-			const locationHeaderError = parseErrorFromLocationHeader(
-				locationHeaderParams
-			);
-			if (locationHeaderError) return handleError(reject, locationHeaderError);
-
-			resolve(locationHeaderParams.access_token);
-		} catch (err) {
-			return handleError(
-				reject,
-				new ErrorWithData(`getAuthToken - ${err.message}`, {
-					url
-				})
-			);
-		}
-	});
+	// });
 };

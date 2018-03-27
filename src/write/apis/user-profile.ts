@@ -25,7 +25,7 @@ export const updateUserProfileApi = async ({
 	try {
 		const response = await fetch(url, options);
 		if (response.ok) {
-			return response.json();
+			return await response.json();
 		}
 		throw new Error(apiErrorType(response.status));
 	} catch (error) {

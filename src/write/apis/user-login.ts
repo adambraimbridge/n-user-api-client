@@ -26,7 +26,7 @@ export const userLoginApi = async ({ email, password, apiHost, apiKey }) => {
 
 		const response = await fetch(url, options);
 		if (response.ok) {
-			return response.json();
+			return await response.json();
 		}
 		throw new Error(apiErrorType(response.status));
 	} catch (error) {
