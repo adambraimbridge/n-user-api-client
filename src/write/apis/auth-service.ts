@@ -1,7 +1,8 @@
 import 'isomorphic-fetch';
 import * as url from 'url';
 import * as querystring from 'querystring';
-import { ErrorWithData } from '../../utils/error';
+
+import { apiErrorType, ErrorWithData } from '../../utils/error';
 import { logger } from '../../utils/logger';
 
 const parseLocationHeader = res => {
@@ -35,31 +36,28 @@ const parseErrorFromLocationHeader = locationHeaderParams => {
 		);
 	}
 
-	if (!locationHeaderParams.access_token)
+	if (!locationHeaderParams.access_token) {
 		return new ErrorWithData(
 			'Auth service - No access_token in Location header',
 			{ type: 'NO_ACCESS_TOKEN' }
 		);
+	}
 	return null;
 };
 
-const checkResponseCode = ({ res, apiClientId }) => {
-	if (res.status === 400)
+const checkResponseCode = ({ res, apiClientId }): Error => {
+	if (res.status === 400) {
 		return new ErrorWithData('Auth service - invalid client ID', {
 			type: 'INVALID_CLIENT_ID',
 			clientId: apiClientId
 		});
-	if (res.status !== 302)
+	}
+	if (res.status !== 302) {
 		return new ErrorWithData(
 			`Auth service - Bad response status=${res.status}`,
 			{ type: 'UNEXPECTED_RESPONSE' }
 		);
-	return null;
-};
-
-const handleError = (reject, err) => {
-	logger.error(err);
-	return reject(err);
+	}
 };
 
 const getFetchOptions = (session: string): RequestInit => ({
@@ -70,7 +68,50 @@ const getFetchOptions = (session: string): RequestInit => ({
 	redirect: 'manual'
 });
 
-export const getAuthToken = ({ session, apiHost, apiClientId }) => {
+
+const handleError = (reject, err) => {
+	logger.error(err);
+	return reject(err);
+};
+
+export const getAuthToken = async ({ session, apiHost, apiClientId }) => {
+	// const params = {
+	// 	response_type: 'token',
+	// 	client_id: apiClientId,
+	// 	scope: 'profile_max'
+	// };
+
+	// const url = `${apiHost}/authorize?${querystring.stringify(params)}`;
+
+	// try {
+	// 	const res = await fetch(url, getFetchOptions(session));
+	// 	if(!res.ok) {
+	// 		throw checkResponseCode({ res, apiClientId });
+	// 	}
+
+	// 	const locationHeaderParams = parseLocationHeader(res);
+	// 	if (!locationHeaderParams) {
+	// 		throw new ErrorWithData('Location header missing', {
+	// 			type: 'LOCATION_HEADER_MISSING'
+	// 		});
+	// 	}
+
+	// 	const locationHeaderError = parseErrorFromLocationHeader(
+	// 		locationHeaderParams
+	// 	);
+	// 	if (locationHeaderError) {
+	// 		throw locationHeaderError;
+	// 	} 
+
+	// 	return locationHeaderParams.access_token;
+	// } catch (error) {
+	// 	logger.error(error);
+	// 	throw new ErrorWithData(`getAuthToken - ${error.message}`, {
+	// 		url, 
+	// 		error
+	// 	});
+	// }
+
 	return new Promise(async (resolve, reject) => {
 		try {
 			const params = {

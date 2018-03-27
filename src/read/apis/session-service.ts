@@ -1,5 +1,5 @@
 import 'isomorphic-fetch';
-import { errorTypes, ErrorWithData } from '../../utils/error';
+import { apiErrorType, ErrorWithData } from '../../utils/error';
 import { isSessionStale } from '../transforms/session-freshness';
 
 export const getSessionData = async ({ session, apiHost, apiKey }) => {
@@ -16,10 +16,11 @@ export const getSessionData = async ({ session, apiHost, apiKey }) => {
 	const response = await fetch(url, options);
 	if (response.ok) {
 		const body = await response.json();
-		if (!body.uuid)
+		if (!body.uuid) {
 			throw new ErrorWithData('Valid user ID not returned', {
-				type: errorTypes.API
+				type: apiErrorType(500)
 			});
+		}
 		return {
 			userId: body.uuid,
 			isSessionStale: isSessionStale(body.creationTime)
@@ -28,6 +29,6 @@ export const getSessionData = async ({ session, apiHost, apiKey }) => {
 	throw new ErrorWithData(errorMsg, {
 		url,
 		statusCode: response.status,
-		type: response.status === 403 ? errorTypes.API_KEY : errorTypes.API
+		type: apiErrorType(response.status)
 	});
 };

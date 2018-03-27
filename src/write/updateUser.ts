@@ -70,7 +70,7 @@ export const changeUserPassword = async (
 		apiHost,
 		apiKey
 	});
-	return userLoginApi({
+	return await userLoginApi({
 		email: userApiResponse.profile.email,
 		password,
 		apiHost,
@@ -97,7 +97,7 @@ export const updateUserProfile = async (opts: UpdateUserOptions): Promise<any> =
 		userUpdate,
 		userApiResponse
 	});
-	return updateUserProfileApi({
+	return await updateUserProfileApi({
 		userId,
 		userUpdate: updateMergedWithFetchedUser,
 		authToken,
