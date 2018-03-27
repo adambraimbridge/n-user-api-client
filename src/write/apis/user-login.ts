@@ -8,7 +8,7 @@ export const userLoginApi = async ({ email, password, apiHost, apiKey }) => {
 	try {
 		if (!password) {
 			throw new Error('password not supplied to userLoginApi');
-		} 
+		}
 		const body = {
 			email,
 			password,
@@ -31,7 +31,7 @@ export const userLoginApi = async ({ email, password, apiHost, apiKey }) => {
 		throw new Error(apiErrorType(response.status));
 	} catch (error) {
 		throw new ErrorWithData(errorMsg, {
-			url, 
+			url,
 			error
 		});
 	}

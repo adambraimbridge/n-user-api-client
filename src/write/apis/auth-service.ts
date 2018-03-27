@@ -109,39 +109,8 @@ export const getAuthToken = async ({ session, apiHost, apiClientId }) => {
 	} catch (error) {
 		logger.error(error);
 		throw new ErrorWithData(`getAuthToken - ${error.message}`, {
-			url, 
+			url,
 			error
 		});
 	}
-
-	// return new Promise(async (resolve, reject) => {
-	// 	try {
-	// 		const res = await fetch(url, getFetchOptions(session));
-
-	// 		const responseCodeError = checkResponseCode(res, apiClientId);
-	// 		if (responseCodeError) throw responseCodeError;
-
-	// 		const locationHeaderParams = parseLocationHeader(res);
-	// 		if (!locationHeaderParams)
-	// 			throw new ErrorWithData('Location header missing', {
-	// 					type: 'LOCATION_HEADER_MISSING'
-	// 				})
-	// 			);
-
-	// 		const locationHeaderError = parseErrorFromLocationHeader(
-	// 			locationHeaderParams
-	// 		);
-	// 		if (locationHeaderError) return handleError(reject, locationHeaderError);
-
-	// 		resolve(locationHeaderParams.access_token);
-	// 	} catch (err) {
-	// 		console.log(err);
-	// 		return handleError(
-	// 			reject,
-	// 			new ErrorWithData(`getAuthToken - ${err.message}`, {
-	// 				url
-	// 			})
-	// 		);
-	// 	}
-	// });
 };
