@@ -5,17 +5,17 @@ import * as querystring from 'querystring';
 import { apiErrorType, ErrorWithData } from '../../utils/error';
 import { logger } from '../../utils/logger';
 
-const parseLocationHeader = (res): querystring.ParsedUrlQuery | null => {
+const parseLocationHeader = (res): any => {
 	const locationHeader = res.headers.get('location');
 	if (!locationHeader) {
 		return null;
 	}
-	const hash = url.parse(locationHeader).hash.replace(/^#/, '');
-	return querystring.parse(hash);
+	const { hash } = url.parse(locationHeader);
+	return hash ? querystring.parse(hash.replace(/^#/, '')) : null;
 };
 
 const parseErrorFromLocationHeader = (locationHeaderParams): Error | null => {
-	if(!locationHeaderParams) {
+	if (!locationHeaderParams) {
 		return new ErrorWithData('Auth service - Location header missing', {
 			type: 'LOCATION_HEADER_MISSING'
 		});
@@ -23,7 +23,7 @@ const parseErrorFromLocationHeader = (locationHeaderParams): Error | null => {
 
 	if (locationHeaderParams.error) {
 		let errorType;
-		if (locationHeaderParams.error_description.startsWith('Missing ')) {
+		if (locationHeaderParams.error_description.startsWith('Missing')) {
 			errorType = 'MISSING_SESSION_TOKEN';
 		} else if (locationHeaderParams.error_description.startsWith('Invalid')) {
 			errorType = 'INVALID_SESSION_TOKEN';
@@ -54,7 +54,10 @@ const parseErrorFromLocationHeader = (locationHeaderParams): Error | null => {
 	return null;
 };
 
-const checkResponseCode = ({ status: statusCode }, apiClientId: string): Error | null => {
+const checkResponseCode = (
+	{ status: statusCode },
+	apiClientId: string
+): Error | null => {
 	if (statusCode === 400) {
 		return new ErrorWithData('Auth service - Invalid client ID', {
 			type: 'INVALID_CLIENT_ID',
@@ -78,13 +81,16 @@ const getFetchOptions = (session: string): RequestInit => ({
 	redirect: 'manual'
 });
 
-
 const handleError = (reject, err) => {
 	logger.error(err);
 	return reject(err);
 };
 
-export const getAuthToken = async ({ session, apiHost, apiClientId }): Promise<any> => {
+export const getAuthToken = async ({
+	session,
+	apiHost,
+	apiClientId
+}): Promise<any> => {
 	const params = {
 		response_type: 'token',
 		client_id: apiClientId,
