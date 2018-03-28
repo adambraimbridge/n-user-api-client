@@ -99,7 +99,7 @@ describe('updateUser', () => {
 			nocks.userApi();
 			changeUserPassword(params)
 				.catch(err => {
-					expect(err.message).to.equal('getAuthToken - Auth service - Bad response status=500');
+					expect(err.message).to.equal('getAuthToken - Auth service - Bad response');
 					done();
 				});
 		});
@@ -213,7 +213,7 @@ describe('updateUser', () => {
 			nocks.userApi();
 			updateUserProfile(params)
 				.catch(err => {
-					expect(err.message).to.equal('getAuthToken - Auth service - Bad response status=500');
+					expect(err.message).to.equal('getAuthToken - Auth service - Bad response');
 					done();
 				});
 		});

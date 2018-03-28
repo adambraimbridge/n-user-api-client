@@ -1,7 +1,8 @@
 import * as membQl from '@financial-times/n-memb-gql-client';
 import { APIMode } from './helpers/api-mode';
 
-import { ErrorWithData } from '../utils/error';
+import { ErrorWithData, apiErrorType } from '../utils/error';
+import { logger } from '../utils/logger';
 
 export enum GraphQlAPIQuery {
 	Canned = 'canned',
@@ -35,15 +36,21 @@ export class GraphQlAPI {
 			const res = await membQl[queryMode](query, variables, this.options);
 			if (!res._ok) {
 				// valid response but contains errors
-				throw new Error(JSON.stringify(res.errors));
+				throw new ErrorWithData(errorMsg, {
+					statusCode: res.status,
+					type: apiErrorType(res.status),
+					errors: res.errors
+				});
 			}
 			return res.data;
 		} catch (error) {
-			throw new ErrorWithData(errorMsg, {
+			const e = new ErrorWithData(errorMsg, {
 				api: 'MEMBERSHIP_GRAPHQL',
 				query,
-				error: JSON.parse(error)
+				error
 			});
+			logger.error(e);
+			throw e;
 		}
 	}
 

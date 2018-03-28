@@ -33,10 +33,13 @@ export const getUserBySession = async (session: string): Promise<GraphQlUserApiR
 			? error.message
 			: defaultErrorMessage;
 
-		throw new ErrorWithData(errorMsg, error.data || {
-			statusCode: 500,
-			type: errorTypes.API
+		const e = new ErrorWithData(errorMsg, {
+			api: 'MEMBERSHIP_GRAPHQL',
+			query: graphQlQuery,
+			error
 		});
+		logger.error(e);
+		throw e;
 	}
 };
 

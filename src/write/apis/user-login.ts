@@ -1,6 +1,7 @@
 import 'isomorphic-fetch';
 
 import { apiErrorType, ErrorWithData } from '../../utils/error';
+import { logger } from '../../utils/logger';
 
 export const userLoginApi = async ({ email, password, apiHost, apiKey }) => {
 	const errorMsg = 'Could not log user in';
@@ -28,11 +29,16 @@ export const userLoginApi = async ({ email, password, apiHost, apiKey }) => {
 		if (response.ok) {
 			return await response.json();
 		}
-		throw new Error(apiErrorType(response.status));
-	} catch (error) {
 		throw new ErrorWithData(errorMsg, {
+			statusCode: response.status,
+			type: apiErrorType(response.status)
+		});
+	} catch (error) {
+		const e = new ErrorWithData(errorMsg, {
 			url,
 			error
 		});
+		logger.error(e);
+		throw e;
 	}
 };
