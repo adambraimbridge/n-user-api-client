@@ -27,11 +27,16 @@ export const updateUserProfileApi = async ({
 		if (response.ok) {
 			return await response.json();
 		}
-		throw new Error(apiErrorType(response.status));
+		throw new ErrorWithData(errorMsg, {
+			statusCode: response.status
+		});
 	} catch (error) {
+		const statusCode = error.data ? error.data.statusCode : 500;
 		throw new ErrorWithData(errorMsg, {
 			url,
-			error
+			error,
+			statusCode,
+			type: apiErrorType(statusCode)
 		});
 	}
 };
