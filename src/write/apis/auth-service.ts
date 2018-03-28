@@ -81,11 +81,6 @@ const getFetchOptions = (session: string): RequestInit => ({
 	redirect: 'manual'
 });
 
-const handleError = (reject, err) => {
-	logger.error(err);
-	return reject(err);
-};
-
 export const getAuthToken = async ({
 	session,
 	apiHost,
