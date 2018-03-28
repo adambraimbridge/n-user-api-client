@@ -101,12 +101,11 @@ describe('updateUser', () => {
 			nocks.graphQlUserBySession({ responseType: 'subscribed' });
 			nocks.authApi({ statusCode: 500 });
 			nocks.userApi();
-			changeUserPassword(params).catch(err => {
-				expect(err.message).to.equal(
-					'getAuthToken - Auth service - Bad response status=500'
-				);
-				done();
-			});
+			changeUserPassword(params)
+				.catch(err => {
+					expect(err.message).to.equal('getAuthToken - Auth service - Bad response');
+					done();
+				});
 		});
 
 		it('handles exception thrown within updateUserPasswordApi', done => {
@@ -230,12 +229,11 @@ describe('updateUser', () => {
 			nocks.graphQlUserBySession({ responseType: 'subscribed' });
 			nocks.authApi({ statusCode: 500 });
 			nocks.userApi();
-			updateUserProfile(params).catch(err => {
-				expect(err.message).to.equal(
-					'getAuthToken - Auth service - Bad response status=500'
-				);
-				done();
-			});
+			updateUserProfile(params)
+				.catch(err => {
+					expect(err.message).to.equal('getAuthToken - Auth service - Bad response');
+					done();
+				});
 		});
 
 		it('handles error if session is expired', done => {

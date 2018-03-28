@@ -1,6 +1,7 @@
 import 'isomorphic-fetch';
 
 import { apiErrorType, ErrorWithData } from '../../utils/error';
+import { logger } from '../../utils/logger';
 
 export const updateUserProfileApi = async ({
 	userId,
@@ -30,11 +31,17 @@ export const updateUserProfileApi = async ({
 		if (response.ok) {
 			return await response.json();
 		}
-		throw new Error(apiErrorType(response.status));
-	} catch (error) {
 		throw new ErrorWithData(errorMsg, {
+			statusCode: response.status,
+			type: apiErrorType(response.status)
+		});
+	} catch (error) {
+		const statusCode = error.data ? error.data.statusCode : 500;
+		const e = new ErrorWithData(errorMsg, {
 			url,
 			error
 		});
+		logger.error(e);
+		throw e;
 	}
 };

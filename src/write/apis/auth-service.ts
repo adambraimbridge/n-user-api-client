@@ -60,15 +60,16 @@ const checkResponseCode = (
 ): Error | null => {
 	if (statusCode === 400) {
 		return new ErrorWithData('Auth service - Invalid client ID', {
+			statusCode,
 			type: 'INVALID_CLIENT_ID',
 			clientId: apiClientId
 		});
 	}
 	if (statusCode !== 302) {
-		return new ErrorWithData(
-			`Auth service - Bad response status=${statusCode}`,
-			{ type: 'UNEXPECTED_RESPONSE' }
-		);
+		return new ErrorWithData('Auth service - Bad response', {
+			statusCode,
+			type: 'UNEXPECTED_RESPONSE'
+		});
 	}
 	return null;
 };
@@ -80,11 +81,6 @@ const getFetchOptions = (session: string): RequestInit => ({
 	method: 'GET',
 	redirect: 'manual'
 });
-
-const handleError = (reject, err) => {
-	logger.error(err);
-	return reject(err);
-};
 
 export const getAuthToken = async ({
 	session,
@@ -113,10 +109,11 @@ export const getAuthToken = async ({
 
 		return locationHeaderParams.access_token;
 	} catch (error) {
-		logger.error(error);
-		throw new ErrorWithData(`getAuthToken - ${error.message}`, {
+		const e = new ErrorWithData(`getAuthToken - ${error.message}`, {
 			url,
 			error
 		});
+		logger.error(e);
+		throw e;
 	}
 };
