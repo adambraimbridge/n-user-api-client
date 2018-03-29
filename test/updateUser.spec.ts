@@ -99,7 +99,7 @@ describe('updateUser', () => {
 			nocks.userApi();
 			changeUserPassword(params)
 				.catch(err => {
-					expect(err.message).to.equal('Auth service - Bad response status=500');
+					expect(err.message).to.equal('getAuthToken - Auth service - Bad response');
 					done();
 				});
 		});
@@ -133,7 +133,7 @@ describe('updateUser', () => {
 			nocks.userApi();
 			changeUserPassword(params)
 				.catch(err => {
-					expect(err.message).to.equal('Auth service - No access_token in Location header');
+					expect(err.message).to.equal('getAuthToken - Auth service - No access_token in Location header');
 					done();
 				});
 		});
@@ -213,7 +213,7 @@ describe('updateUser', () => {
 			nocks.userApi();
 			updateUserProfile(params)
 				.catch(err => {
-					expect(err.message).to.equal('Auth service - Bad response status=500');
+					expect(err.message).to.equal('getAuthToken - Auth service - Bad response');
 					done();
 				});
 		});
@@ -224,7 +224,7 @@ describe('updateUser', () => {
 			nocks.userApi();
 			updateUserProfile(params)
 				.catch(err => {
-					expect(err.message).to.equal('Auth service - No access_token in Location header');
+					expect(err.message).to.equal('getAuthToken - Auth service - No access_token in Location header');
 					done();
 				});
 		});

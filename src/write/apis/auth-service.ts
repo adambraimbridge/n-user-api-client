@@ -1,20 +1,29 @@
 import 'isomorphic-fetch';
 import * as url from 'url';
 import * as querystring from 'querystring';
-import { ErrorWithData } from '../../utils/error';
+
+import { apiErrorType, ErrorWithData } from '../../utils/error';
 import { logger } from '../../utils/logger';
 
-const parseLocationHeader = res => {
+const parseLocationHeader = (res): any => {
 	const locationHeader = res.headers.get('location');
-	if (!locationHeader) return null;
-	const hash = url.parse(locationHeader).hash.replace(/^#/, '');
-	return querystring.parse(hash);
+	if (!locationHeader) {
+		return null;
+	}
+	const { hash } = url.parse(locationHeader);
+	return hash ? querystring.parse(hash.replace(/^#/, '')) : null;
 };
 
-const parseErrorFromLocationHeader = locationHeaderParams => {
+const parseErrorFromLocationHeader = (locationHeaderParams): Error | null => {
+	if (!locationHeaderParams) {
+		return new ErrorWithData('Auth service - Location header missing', {
+			type: 'LOCATION_HEADER_MISSING'
+		});
+	}
+
 	if (locationHeaderParams.error) {
 		let errorType;
-		if (locationHeaderParams.error_description.startsWith('Missing ')) {
+		if (locationHeaderParams.error_description.startsWith('Missing')) {
 			errorType = 'MISSING_SESSION_TOKEN';
 		} else if (locationHeaderParams.error_description.startsWith('Invalid')) {
 			errorType = 'INVALID_SESSION_TOKEN';
@@ -35,31 +44,34 @@ const parseErrorFromLocationHeader = locationHeaderParams => {
 		);
 	}
 
-	if (!locationHeaderParams.access_token)
+	if (!locationHeaderParams.access_token) {
 		return new ErrorWithData(
 			'Auth service - No access_token in Location header',
 			{ type: 'NO_ACCESS_TOKEN' }
 		);
+	}
+
 	return null;
 };
 
-const checkResponseCode = ({ res, apiClientId }) => {
-	if (res.status === 400)
-		return new ErrorWithData('Auth service - invalid client ID', {
+const checkResponseCode = (
+	{ status: statusCode },
+	apiClientId: string
+): Error | null => {
+	if (statusCode === 400) {
+		return new ErrorWithData('Auth service - Invalid client ID', {
+			statusCode,
 			type: 'INVALID_CLIENT_ID',
 			clientId: apiClientId
 		});
-	if (res.status !== 302)
-		return new ErrorWithData(
-			`Auth service - Bad response status=${res.status}`,
-			{ type: 'UNEXPECTED_RESPONSE' }
-		);
+	}
+	if (statusCode !== 302) {
+		return new ErrorWithData('Auth service - Bad response', {
+			statusCode,
+			type: 'UNEXPECTED_RESPONSE'
+		});
+	}
 	return null;
-};
-
-const handleError = (reject, err) => {
-	logger.error(err);
-	return reject(err);
 };
 
 const getFetchOptions = (session: string): RequestInit => ({
@@ -70,44 +82,38 @@ const getFetchOptions = (session: string): RequestInit => ({
 	redirect: 'manual'
 });
 
-export const getAuthToken = ({ session, apiHost, apiClientId }) => {
-	return new Promise(async (resolve, reject) => {
-		try {
-			const params = {
-				response_type: 'token',
-				client_id: apiClientId,
-				scope: 'profile_max'
-			};
+export const getAuthToken = async ({
+	session,
+	apiHost,
+	apiClientId
+}): Promise<any> => {
+	const params = {
+		response_type: 'token',
+		client_id: apiClientId,
+		scope: 'profile_max'
+	};
 
-			const url = `${apiHost}/authorize?${querystring.stringify(params)}`;
+	const url = `${apiHost}/authorize?${querystring.stringify(params)}`;
 
-			const res = await fetch(url, getFetchOptions(session));
+	try {
+		const res = await fetch(url, getFetchOptions(session));
 
-			const responseCodeError = checkResponseCode({ res, apiClientId });
-			if (responseCodeError) return handleError(reject, responseCodeError);
+		const responseCodeError = checkResponseCode(res, apiClientId);
+		if (responseCodeError) throw responseCodeError;
 
-			const locationHeaderParams = parseLocationHeader(res);
-			if (!locationHeaderParams)
-				return handleError(
-					reject,
-					new ErrorWithData('Location header missing', {
-						type: 'LOCATION_HEADER_MISSING'
-					})
-				);
+		const locationHeaderParams = parseLocationHeader(res);
+		const locationHeaderError = parseErrorFromLocationHeader(
+			locationHeaderParams
+		);
+		if (locationHeaderError) throw locationHeaderError;
 
-			const locationHeaderError = parseErrorFromLocationHeader(
-				locationHeaderParams
-			);
-			if (locationHeaderError) return handleError(reject, locationHeaderError);
-
-			resolve(locationHeaderParams.access_token);
-		} catch (err) {
-			return handleError(
-				reject,
-				new ErrorWithData(`getAuthToken - ${err.message}`, {
-					url
-				})
-			);
-		}
-	});
+		return locationHeaderParams.access_token;
+	} catch (error) {
+		const e = new ErrorWithData(`getAuthToken - ${error.message}`, {
+			url,
+			error
+		});
+		logger.error(e);
+		throw e;
+	}
 };

@@ -5,71 +5,45 @@ import * as R from 'ramda';
 import { readTransforms } from './transforms';
 import { ErrorWithData, errorTypes } from '../utils/error';
 import { getSessionData } from './apis/session-service';
+import { validateOptions } from '../utils/validate';
 
-const handleGraphQlError = (res: any, defaultErrorMsg: string, data?: any) => {
-	let errorMsg = defaultErrorMsg;
-	if (res && !res._ok && res.errors.length) {
-		errorMsg = res.errors[0].message;
-	}
-	const error = new ErrorWithData(errorMsg, {
-		...data,
-		statusCode: 500
-	});
-	logger.error(errorMsg);
-	return error;
-};
-
-const validateStringOptions = opts => {
-	if (!opts) throw new Error('Options not supplied');
-	const stringOpts = ['session', 'apiHost', 'apiKey'];
-	let invalidOptions = [];
-	stringOpts.forEach(stringOpt => {
-		if (typeof opts[stringOpt] !== 'string') {
-			invalidOptions.push(stringOpt);
-		}
-	});
-	if (invalidOptions.length)
-		throw new Error(`Invalid option(s): ${invalidOptions.join(', ')}`);
-};
-
-export const getUserBySession = (
-	session: string
-): Promise<GraphQlUserApiResponse> => {
-	return new Promise(async (resolve, reject) => {
-		let res;
-		const graphQlQuery = 'mma-user-by-session';
-		try {
-			if (!session)
-				throw new ErrorWithData('Session not supplied', {
-					type: errorTypes.VALIDATION
-				});
-			res = await canned(graphQlQuery, { session }, { timeout: 10000 });
-			const user = R.path(['data', 'user'], res);
-			if (user) {
-				const transformed = readTransforms(user);
-				return resolve(transformed);
-			}
-		} catch (err) {
-			let defaultErrorMsg =
-				err.data && err.data.type === errorTypes.VALIDATION
-					? err.message
-					: 'Unable to retrieve user';
-			const error = handleGraphQlError(res, defaultErrorMsg, {
-				graphQlQuery,
-				err
+export const getUserBySession = async (session: string): Promise<GraphQlUserApiResponse> => {
+	const defaultErrorMessage = 'Unable to retrieve user';
+	const graphQlQuery = 'mma-user-by-session';
+	try {
+		if (!session) {
+			throw new ErrorWithData('Session not supplied', {
+				statusCode: 500,
+				type: errorTypes.VALIDATION
 			});
-			reject(error);
 		}
-	});
+		const res = await canned(graphQlQuery, { session }, { timeout: 10000 });
+		const user = R.path(['data', 'user'], res);
+		if (!res._ok || !user) {
+			throw new ErrorWithData(defaultErrorMessage, {
+				statusCode: res.status,
+				type: errorTypes.API,
+				errors: res.errors
+			});
+		}
+		const transformed = readTransforms(user);
+		return transformed;
+	} catch (error) {
+		const errorMsg = error.data
+			? error.message
+			: defaultErrorMessage;
+
+		const e = new ErrorWithData(errorMsg, {
+			api: 'MEMBERSHIP_GRAPHQL',
+			query: graphQlQuery,
+			error
+		});
+		logger.error(e);
+		throw e;
+	}
 };
 
-export const getUserIdAndSessionData = (opts): Promise<any> => {
-	return new Promise(async (resolve, reject) => {
-		try {
-			validateStringOptions(opts);
-			return resolve(getSessionData(opts));
-		} catch (err) {
-			reject(err);
-		}
-	});
+export const getUserIdAndSessionData = async (opts): Promise<any> => {
+	validateOptions(opts, null, ['session', 'apiHost', 'apiKey']);
+	return await getSessionData(opts);
 };

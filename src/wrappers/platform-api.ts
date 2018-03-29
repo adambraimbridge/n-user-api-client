@@ -3,7 +3,7 @@ import { mergeDeepRight } from 'ramda';
 import { APIMode } from './helpers/api-mode';
 
 import { apiErrorType, ErrorWithData } from '../utils/error';
-
+import { logger } from '../utils/logger';
 
 export class PlatformAPI {
 	protected url: string;
@@ -37,13 +37,13 @@ export class PlatformAPI {
 		});
 	}
 
-	private get apiHost(): string {
+	private get apiHost(): string | undefined {
 		return PlatformAPI.guardEnvironmentVariable(
 			`MEMBERSHIP_API_HOST_${this.mode}`
 		);
 	}
 
-	private get apiKey(): string {
+	private get apiKey(): string | undefined {
 		return PlatformAPI.guardEnvironmentVariable(
 			`MEMBERSHIP_API_KEY_${this.mode}`
 		);
@@ -60,16 +60,20 @@ export class PlatformAPI {
 			const response = await fetch(`${this.url}${path}`, options);
 			if (!response.ok) {
 				statusCode = response.status;
-				throw new Error(`API responded with status ${response.status}`);
+				throw new ErrorWithData('API: Bad response', {
+					statusCode,
+					type: apiErrorType(statusCode)
+				});
 			}
 			return response;
 		} catch (error) {
-			throw new ErrorWithData(errorMsg, {
+			const e = new ErrorWithData(errorMsg, {
 				api: 'MEMBERSHIP_PLATFORM',
 				url: this.url,
-				statusCode,
-				type: apiErrorType(statusCode)
+				error
 			});
+			logger.error(e);
+			throw(e);
 		}
 	}
 

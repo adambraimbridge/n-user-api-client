@@ -35,4 +35,11 @@ describe('loginUser', () => {
 		}
 	});
 
+	it('throws if invalid options supplied', async () => {
+		try {
+			await loginUser(Object.assign({}, params, { email: false }));
+		} catch (err) {
+			expect(err.message).to.equal('Invalid option(s): email');
+		}
+	});
 });

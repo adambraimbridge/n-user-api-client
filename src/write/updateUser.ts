@@ -49,77 +49,59 @@ const mergeUserUpdateWithFetchedUser = ({
 export const changeUserPassword = async (
 	opts: UpdateUserOptions
 ): Promise<any> => {
-	return new Promise(async (resolve, reject) => {
-		try {
-			validateOptions(opts, 'passwordData', KEY_PROPERTIES);
-			const {
-				session,
-				apiHost,
-				apiKey,
-				apiClientId,
-				userId,
-				passwordData
-			} = opts;
-			const [userApiResponse, authToken] = await getUserAndAuthToken({
-				session,
-				apiHost,
-				apiClientId
-			});
-			const password = await updateUserPasswordApi({
-				userId,
-				passwordData,
-				authToken,
-				apiHost,
-				apiKey
-			});
-			resolve(
-				await userLoginApi({
-					email: userApiResponse.profile.email,
-					password,
-					apiHost,
-					apiKey
-				})
-			);
-		} catch (err) {
-			reject(err);
-		}
+	validateOptions(opts, 'passwordData', KEY_PROPERTIES);
+	const {
+		session,
+		apiHost,
+		apiKey,
+		apiClientId,
+		userId,
+		passwordData
+	} = opts;
+	const [userApiResponse, authToken] = await getUserAndAuthToken({
+		session,
+		apiHost,
+		apiClientId
+	});
+	const password = await updateUserPasswordApi({
+		userId,
+		passwordData,
+		authToken,
+		apiHost,
+		apiKey
+	});
+	return await userLoginApi({
+		email: userApiResponse.profile.email,
+		password,
+		apiHost,
+		apiKey
 	});
 };
 
-export const updateUserProfile = async (
-	opts: UpdateUserOptions
-): Promise<any> => {
-	return new Promise(async (resolve, reject) => {
-		try {
-			validateOptions(opts, 'userUpdate', KEY_PROPERTIES);
-			const {
-				session,
-				apiHost,
-				apiKey,
-				apiClientId,
-				userId,
-				userUpdate
-			} = opts;
-			const [userApiResponse, authToken] = await getUserAndAuthToken({
-				session,
-				apiHost,
-				apiClientId
-			});
-			const updateMergedWithFetchedUser = mergeUserUpdateWithFetchedUser({
-				userUpdate,
-				userApiResponse
-			});
-			resolve(
-				await updateUserProfileApi({
-					userId,
-					userUpdate: updateMergedWithFetchedUser,
-					authToken,
-					apiHost,
-					apiKey
-				})
-			);
-		} catch (err) {
-			reject(err);
-		}
+export const updateUserProfile = async (opts: UpdateUserOptions): Promise<any> => {
+	validateOptions(opts, 'userUpdate', KEY_PROPERTIES);
+	const {
+		session,
+		apiHost,
+		apiKey,
+		apiClientId,
+		userId,
+		userUpdate
+	} = opts;
+	const [userApiResponse, authToken] = await getUserAndAuthToken({
+		session,
+		apiHost,
+		apiClientId
+	});
+	const updateMergedWithFetchedUser = mergeUserUpdateWithFetchedUser({
+		userUpdate,
+		userApiResponse
+	});
+	return await updateUserProfileApi({
+		userId,
+		userUpdate: updateMergedWithFetchedUser,
+		authToken,
+		apiHost,
+		apiKey
 	});
 };
