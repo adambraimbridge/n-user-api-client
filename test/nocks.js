@@ -1,5 +1,5 @@
-import * as nock from 'nock';
-import { test, testEnv, responses } from './constants';
+const nock = require('nock');
+const { test, testEnv, responses } = require('./constants');
 
 const getResponse = (statusCode, responseType) => {
 	let response;
@@ -94,7 +94,6 @@ export const nocks = {
 	},
 
 	loginApi: ({ statusCode = 200 } = {}) => {
-		let requestBody;
 		const response =
 			statusCode === 200 ? responses.loginSuccess : responses.genericError;
 		let loginApiNock = nock('https://api.ft.com')
