@@ -1,11 +1,10 @@
 import { expect } from 'chai';
 import { loginUser } from '../src/write/loginUser';
 import { nocks } from './nocks';
-import { LoginUserOptions } from '../src/types';
 
 describe('loginUser', () => {
 	const params = {
-		email: 'test@mail.com',
+		email: 'test@ft.com',
 		password: 'password',
 		apiKey: 'apiKey',
 		apiHost: 'https://api.ft.com'
