@@ -30,7 +30,7 @@ export const nocks = {
 		session,
 		isStale = false,
 		isValidUserId = true
-	} = {} as any) => {
+	} = {}) => {
 		if (!session)
 			throw new Error('userIdBySession nock requires a session argument');
 		const response = getUserIdAndSessionDataResponse({
@@ -44,19 +44,19 @@ export const nocks = {
 			.reply(statusCode, response);
 	},
 
-	consentApi: (path: string, method: string, statusCode: number, response?: any): nock.Scope => {
+	consentApi: (path, method, statusCode, response) => {
 		return nock(testEnv.MEMBERSHIP_API_HOST_MOCK)
 			[method](`/users/${test.uuid}/${test.scope}${path}`)
 			.reply(statusCode, response);
 	},
 
-	platformApi: (method: string, statusCode: number, response?: any): nock.Scope => {
+	platformApi: (method, statusCode, response) => {
 		return nock(testEnv.MEMBERSHIP_API_HOST_MOCK)
 			[method]('/')
 			.reply(statusCode, response);
 	},
 
-	graphQlUserBySession: ({ responseType, statusCode = 200 }): nock.Scope => {
+	graphQlUserBySession: ({ responseType, statusCode = 200 }) => {
 		const response = getResponse(statusCode, responseType);
 		return nock('https://api.ft.com')
 			.get('/memb-query/api/mma-user-by-session')
@@ -64,11 +64,11 @@ export const nocks = {
 			.reply(statusCode, response);
 	},
 
-	authApi: ({ statusCode = 302, expiredSession = false } = {} as any): any => {
+	authApi: ({ statusCode = 302, expiredSession = false } = {}) => {
 		const result = expiredSession
 			? '#error=invalid_scope&error_description=Cannot%20acquire%20valid%20scope.'
 			: 'access_token=a1b2c3';
-		let authApiNock: any = nock('https://api.ft.com')
+		let authApiNock = nock('https://api.ft.com')
 			.defaultReplyHeaders({
 				Location: `https://www.ft.com/preferences#${result}`
 			})
@@ -80,24 +80,24 @@ export const nocks = {
 		return authApiNock;
 	},
 
-	userApi: ({ statusCode = 200, userId } = {} as any): nock.Scope => {
+	userApi: ({ statusCode = 200, userId } = {}) => {
 		return nock('https://api.ft.com')
 			.put(`/users/${userId}/profile`)
 			.reply(statusCode, (uri, requestBody) => requestBody);
 	},
 
-	userPasswordApi: ({ statusCode = 200, userId } = {} as any): nock.Scope => {
+	userPasswordApi: ({ statusCode = 200, userId } = {}) => {
 		const response = statusCode === 200 ? {} : responses.genericError;
 		return nock('https://api.ft.com')
 			.post(`/users/${userId}/credentials/change-password`)
 			.reply(statusCode, response);
 	},
 
-	loginApi: ({ statusCode = 200 } = {} as any): any => {
+	loginApi: ({ statusCode = 200 } = {}) => {
 		let requestBody;
 		const response =
 			statusCode === 200 ? responses.loginSuccess : responses.genericError;
-		let loginApiNock: any = nock('https://api.ft.com')
+		let loginApiNock = nock('https://api.ft.com')
 			.post('/login', body => (loginApiNock.requestBody = body))
 			.reply(statusCode, response);
 		return loginApiNock;

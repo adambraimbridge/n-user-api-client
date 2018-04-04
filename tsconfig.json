@@ -9,6 +9,7 @@
     "strict": true,
     "removeComments": true,
     "lib": ["es2017", "dom"],
-    "noImplicitAny": false
+    "noImplicitAny": false,
+    "allowJs": true
   }
 }
