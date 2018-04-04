@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { getUserBySession, getUserIdAndSessionData } from '../src/read/getUser';
-import { nocks } from './nocks';
+import {graphQlUserBySession, userIdBySession} from './nocks';
 
 describe('getUser', () => {
 	const session = '123';
@@ -8,13 +8,13 @@ describe('getUser', () => {
 
 	describe('getUserBySession', () => {
 		it('resolves with a transformed user object when successful', async () => {
-			nocks.graphQlUserBySession({ responseType: 'subscribed' });
+			graphQlUserBySession({ responseType: 'subscribed' });
 			const user = await getUserBySession(session);
 			expect(user.profile.firstName).to.equal('John');
 		});
 
 		it('handles exception thrown within canned query', async () => {
-			nocks.graphQlUserBySession({ responseType, statusCode: 500 });
+			graphQlUserBySession({ responseType, statusCode: 500 });
 			return getUserBySession(session)
 				.catch(err =>
 					expect(err.message).to.equal('Unable to retrieve user'));
@@ -37,32 +37,32 @@ describe('getUser', () => {
 		};
 
 		it('resolves with a user ID when successful', async () => {
-			nocks.userIdBySession({session: params.session});
+			userIdBySession({session: params.session});
 			const sessionData = await getUserIdAndSessionData(params);
 			expect(sessionData.userId).to.equal('user-456');
 		});
 
 		it('indicates if the session is stale', async () => {
-			nocks.userIdBySession({session: params.session, isStale: true});
+			userIdBySession({session: params.session, isStale: true});
 			const sessionData = await getUserIdAndSessionData(params);
 			expect(sessionData.isSessionStale).to.equal(true);
 		});
 
 		it('indicates if the session is not stale', async () => {
-			nocks.userIdBySession({session: params.session});
+			userIdBySession({session: params.session});
 			const sessionData = await getUserIdAndSessionData(params);
 			expect(sessionData.isSessionStale).to.equal(false);
 		});
 
 		it('throws if a valid user ID not returned', async () => {
-			nocks.userIdBySession({session: params.session, isValidUserId: false});
+			userIdBySession({session: params.session, isValidUserId: false});
 			return getUserIdAndSessionData(params)
 				.catch(err =>
 					expect(err.message).to.equal('Valid user ID not returned'));
 		});
 
 		it('handles exception thrown by session API fetch', async () => {
-			nocks.userIdBySession({session: params.session, statusCode: 500});
+			userIdBySession({session: params.session, statusCode: 500});
 			return getUserIdAndSessionData(params)
 				.catch(err =>
 					expect(err.message).to.equal('Could not get session data'));
@@ -93,7 +93,7 @@ describe('getUser', () => {
 		});
 
 		it('throws if an invalid API key is used', async () => {
-			nocks.userIdBySession({session: params.session, statusCode: 403});
+			userIdBySession({session: params.session, statusCode: 403});
 			return getUserIdAndSessionData(params)
 				.catch(err => {
 					expect(err.data.statusCode).to.equal(403);

@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { loginUser } from '../src/write/loginUser';
-import { nocks } from './nocks';
+import {loginApi} from './nocks';
 
 describe('loginUser', () => {
 	const params = {
@@ -11,14 +11,14 @@ describe('loginUser', () => {
 	};
 
 	it('resolves with new session data when successful', async () => {
-		nocks.loginApi();
+		loginApi();
 		const sessionData = await loginUser(params);
 		expect(sessionData.sessionToken).to.be.a('string');
 		expect(sessionData.secureSessionToken).to.be.a('string');
 	});
 
 	it('handles exception thrown', async () => {
-		nocks.loginApi({ statusCode: 500 });
+		loginApi({ statusCode: 500 });
 		try {
 			await loginUser(params);
 		} catch (err) {

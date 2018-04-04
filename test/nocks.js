@@ -14,23 +14,23 @@ const getResponse = (statusCode, responseType) => {
 };
 
 const getUserIdAndSessionDataResponse = ({
-	statusCode,
-	isStale,
-	isValidUserId
-}) => {
+																					 statusCode,
+																					 isStale,
+																					 isValidUserId
+																				 }) => {
 	if (statusCode !== 200) return responses.genericError;
 	if (isStale) return responses.userIdBySessionStale;
 	if (!isValidUserId) return responses.userIdBySessionInvalid;
 	return responses.userIdBySessionSuccess;
 };
 
-export const nocks = {
+module.exports = {
 	userIdBySession: ({
-		statusCode = 200,
-		session,
-		isStale = false,
-		isValidUserId = true
-	} = {}) => {
+											statusCode = 200,
+											session,
+											isStale = false,
+											isValidUserId = true
+										} = {}) => {
 		if (!session)
 			throw new Error('userIdBySession nock requires a session argument');
 		const response = getUserIdAndSessionDataResponse({

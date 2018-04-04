@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { nocks } from '../nocks';
+import {platformApi} from '../nocks';
 import * as sinon from 'sinon';
 
 import { PlatformAPI } from '../../src/wrappers/platform-api';
@@ -38,7 +38,7 @@ describe('PlatformAPI wrapper', () => {
 	});
 
 	it('should deep merge request options', async () => {
-		nocks.platformApi('get', 200);
+		platformApi('get', 200);
 		const options = {
 			headers: {
 				foo: 'bar'
@@ -55,7 +55,7 @@ describe('PlatformAPI wrapper', () => {
 	});
 
 	it('should throw if request errors', async () => {
-		nocks.platformApi('get', 400);
+		platformApi('get', 400);
 		try {
 			await api.request('GET', '', 'Error message');
 		} catch (error) {
@@ -65,7 +65,7 @@ describe('PlatformAPI wrapper', () => {
 	});
 
 	it('should resolve a request', async () => {
-		nocks.platformApi('get', 200, 'test-ok-response');
+		platformApi('get', 200, 'test-ok-response');
 		const response = await api.request('GET', '', 'Error message');
 		expect(response.status).to.equal(200);
 		expect(await response.text()).to.equal('test-ok-response');

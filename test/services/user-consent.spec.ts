@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { mergeDeepRight } from 'ramda';
-import { nocks } from '../nocks';
+import {consentApi} from '../nocks';
 
 import { UserConsent } from '../../src/services/user-consent';
 import { APIMode } from '../../src/wrappers/helpers/api-mode';
@@ -96,7 +96,7 @@ describe('UserConsent - consent API wrapper', () => {
 
 	context('getConsent', () => {
 		it('should get a consent unit for a user', async () => {
-			nocks.consentApi(
+			consentApi(
 				`/${test.category}/${test.channel}`,
 				'get',
 				200,
@@ -107,7 +107,7 @@ describe('UserConsent - consent API wrapper', () => {
 		});
 
 		it('should throw a decorated error', async () => {
-			nocks.consentApi(`/${test.category}/${test.channel}`, 'get', 400);
+			consentApi(`/${test.category}/${test.channel}`, 'get', 400);
 			try {
 				await api.getConsent(test.category, test.channel);
 			} catch (error) {
@@ -118,13 +118,13 @@ describe('UserConsent - consent API wrapper', () => {
 
 	context('getConsentRecord', () => {
 		it('should get the consent record for a user', async () => {
-			nocks.consentApi('', 'get', 200, consentRecordResponse);
+			consentApi('', 'get', 200, consentRecordResponse);
 			const response = await api.getConsentRecord();
 			expect(response).to.deep.equal(consentRecord);
 		});
 
 		it('should throw a decorated error', async () => {
-			nocks.consentApi('', 'get', 400);
+			consentApi('', 'get', 400);
 			try {
 				await api.getConsentRecord();
 			} catch (error) {
@@ -135,7 +135,7 @@ describe('UserConsent - consent API wrapper', () => {
 
 	context('createConsent', () => {
 		it('should create a consent unit for a user', async () => {
-			nocks.consentApi(
+			consentApi(
 				`/${test.category}/${test.channel}`,
 				'post',
 				200,
@@ -150,7 +150,7 @@ describe('UserConsent - consent API wrapper', () => {
 		});
 
 		it('should throw a decorated error', async () => {
-			nocks.consentApi(`/${test.category}/${test.channel}`, 'post', 400);
+			consentApi(`/${test.category}/${test.channel}`, 'post', 400);
 			try {
 				await api.createConsent(test.category, test.channel, consentUnit);
 			} catch (error) {
@@ -161,13 +161,13 @@ describe('UserConsent - consent API wrapper', () => {
 
 	context('createConsentRecord', () => {
 		it('should create a consent record for a user', async () => {
-			nocks.consentApi('', 'post', 200, consentRecordResponse);
+			consentApi('', 'post', 200, consentRecordResponse);
 			const response = await api.createConsentRecord(consentRecord);
 			expect(response).to.deep.equal(consentRecord);
 		});
 
 		it('should throw a decorated error', async () => {
-			nocks.consentApi('', 'post', 400);
+			consentApi('', 'post', 400);
 			try {
 				await api.createConsentRecord(consentRecord);
 			} catch (error) {
@@ -178,7 +178,7 @@ describe('UserConsent - consent API wrapper', () => {
 
 	context('updateConsent', () => {
 		it('should update a consent unit for a user', async () => {
-			nocks.consentApi(
+			consentApi(
 				`/${test.category}/${test.channel}`,
 				'patch',
 				200,
@@ -193,7 +193,7 @@ describe('UserConsent - consent API wrapper', () => {
 		});
 
 		it('should throw a decorated error', async () => {
-			nocks.consentApi(`/${test.category}/${test.channel}`, 'patch', 400);
+			consentApi(`/${test.category}/${test.channel}`, 'patch', 400);
 			try {
 				await api.updateConsent(test.category, test.channel, consentUnit);
 			} catch (error) {
@@ -219,14 +219,14 @@ describe('UserConsent - consent API wrapper', () => {
 		});
 
 		it('should update the consent record for a user', async () => {
-			nocks.consentApi('', 'get', 200, consentRecordResponse);
-			nocks.consentApi('', 'put', 200, updatedConsentRecord);
+			consentApi('', 'get', 200, consentRecordResponse);
+			consentApi('', 'put', 200, updatedConsentRecord);
 			const response = await api.updateConsentRecord(payload);
 			expect(response).to.deep.equal(updatedConsentRecord.data);
 		});
 
 		it('should throw a decorated error', async () => {
-			nocks.consentApi('', 'put', 400);
+			consentApi('', 'put', 400);
 			try {
 				await api.updateConsentRecord(payload);
 			} catch (error) {
