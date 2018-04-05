@@ -8,7 +8,6 @@ export const consentSchema: Joi.ObjectSchema = Joi.object().keys({
 	status: Joi.boolean()
 		.required(),
 	source: Joi.string()
-		.alphanum()
 		.required(),
 	fow: Joi.string()
 		.required()
