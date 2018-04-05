@@ -101,11 +101,11 @@ If successful, the user will be reauthenticated and the [fresh session data](htt
 
 ### UserConsent
 
-Requires the `MEMBERSHIP_API_HOST_PROD` and `MEMBERSHIP_API_KEY_PROD` environment variables, respectively `..._TEST` / `..._MOCK` (see `mode` below).
+By default, requires the `MEMBERSHIP_API_HOST_PROD` and `MEMBERSHIP_API_KEY_PROD` environment variables, respectively `..._TEST` / `..._MOCK` (see `mode` below). If the `envVarPrefix` argument is set, these environment variables used will be `${envVarPrefix}_HOST_*` and `${envVarPrefix}_KEY_*`.
 
 ```js
 import { UserConsent } from '@financial-times/n-user-api-client';
-const api = new UserConsent(uuid, source[, mode = 'PROD', scope = 'FTPINK']);
+const api = new UserConsent(uuid, source[, mode = 'PROD', scope = 'FTPINK', envVarPrefix = 'CONSENT_API']);
 
 // e.g const api = new UserConsent('user-id-here', 'signup-app');
 ```
@@ -144,13 +144,13 @@ const consentRecordPayload = {
       status: true,
       fow: "fow-id",
       lbi: false, // optional, defaults to false
-      source: "my-source" // optional, will overwrite the instance source
+      source: "my-source"
     },
     channelName2: {
       status: true,
       fow: "fow-id",
       lbi: false, // optional, defaults to false
-      source: "my-source" // optional, will overwrite the instance source
+      source: "my-source"
     }
   },
   categoryName2: { ... }
