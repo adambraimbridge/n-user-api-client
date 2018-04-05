@@ -4,7 +4,7 @@ import { PlatformAPI } from '../wrappers/platform-api';
 import { APIMode } from '../wrappers/helpers/api-mode';
 import { ConsentAPI } from '../types/consent-api';
 
-import { validateConsent } from './validation/consent-api';
+import * as ConsentValidator from './validation/consent-api';
 
 export class UserConsent extends PlatformAPI {
 	constructor(
@@ -20,20 +20,16 @@ export class UserConsent extends PlatformAPI {
 	private validateConsent(
 		consent: ConsentAPI.ConsentChannel
 	): ConsentAPI.ConsentChannel {
-		return validateConsent(consent, this.source);
+		return ConsentValidator.validateConsent(
+			consent,
+			this.source
+		);
 	}
 
 	private validateConsentRecord(
 		consents: ConsentAPI.ConsentCategories
 	): ConsentAPI.ConsentCategories {
-		let validConsents = {};
-		for (let [category, value] of Object.entries(consents)) {
-			validConsents[category] = {};
-			for (let [channel, consent] of Object.entries(value)) {
-				validConsents[category][channel] = this.validateConsent(consent);
-			}
-		}
-		return validConsents;
+		return ConsentValidator.validateConsentRecord(consents);
 	}
 
 	public async getConsent(
@@ -141,3 +137,5 @@ export class UserConsent extends PlatformAPI {
 		return data;
 	}
 }
+
+export { ConsentValidator };
