@@ -6,34 +6,40 @@
   },
   "consents": [
     {
-      "heading": "Recommendations",
-      "category": "recommendations",
+      "label": "Recommendations",
+      "category": "recommendedContent",
       "channels": [
         {
           "label": "Personalised recommendations",
           "description": "We help you find new content to read by showing you articles you may be interested in.",
           "advisory": "If you turn this off, you may still see 'recommendations' but these won't be personalised to you.",
-          "channel": "personalisedRecommendations",
+          "channel": "onsite",
           "lbi": false
         }
       ]
     },
     {
-      "heading": "Advertising",
-      "category": "advertising",
+      "label": "Advertising",
+      "category": "demographicAds",
       "channels": [
         {
           "label": "Adverts personalised to you",
           "description": "We help you see personalised products and services that may be interesting to you.",
           "advisory": "If you turn this off, you will still see adverts, but they may not be as relevant to you.",
-          "channel": "advertisingPersonalised",
+          "channel": "onsite",
           "lbi": false
-        },
+        }
+      ]
+    },
+    {
+      "label": "Advertising",
+      "category": "behaviouralAds",
+      "channels": [
         {
           "label": "Adverts based on your interests",
           "description": "We show you personalised products and services based on how you use the site.",
           "advisory": "If you turn this off, you will still see adverts, but they may not be as useful to you.",
-          "channel": "advertisingInterests",
+          "channel": "onsite",
           "lbi": false
         }
       ]
