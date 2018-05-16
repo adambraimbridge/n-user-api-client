@@ -101,11 +101,19 @@ If successful, the user will be reauthenticated and the [fresh session data](htt
 
 ### UserConsent
 
-By default, requires the `MEMBERSHIP_API_HOST_PROD` and `MEMBERSHIP_API_KEY_PROD` environment variables, respectively `..._TEST` / `..._MOCK` (see `mode` below). If the `envVarPrefix` argument is set, these environment variables used will be `${envVarPrefix}_HOST_*` and `${envVarPrefix}_KEY_*`.
+By default, requires the `MEMBERSHIP_API_HOST_PROD` and `MEMBERSHIP_API_KEY_PROD` environment variables, respectively `..._TEST` / `..._MOCK` (see `mode` below). If the optional `options` argument contains an `envPrefix` property, these environment variables used will be `${envPrefix}_HOST_*` and `${envPrefix}_KEY_*`.
 
 ```js
 import { UserConsent } from '@financial-times/n-user-api-client';
-const api = new UserConsent(uuid, source[, mode = 'PROD', scope = 'FTPINK', envVarPrefix = 'CONSENT_API']);
+
+// optional overrides
+const options = {
+  envPrefix: 'MY_API', // use MY_API_HOST_* and MY_API_KEY_* env vars, defaults to MEMBERSHIP_API
+  apiKeyHeader: 'ft-api-key', // override the api key header name, defaults to x-api-key
+  path: '/my/path' // override the base path after the host, defaults to /consent/users/
+}
+
+const api = new UserConsent(uuid, source[, mode = 'PROD', scope = 'FTPINK', options]);
 
 // e.g const api = new UserConsent('user-id-here', 'signup-app');
 ```

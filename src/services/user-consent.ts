@@ -1,15 +1,10 @@
 import { mergeDeepRight } from 'ramda';
 
-import { PlatformAPI } from '../wrappers/platform-api';
+import { PlatformAPI, PlatformAPIOptions } from '../wrappers/platform-api';
 import { APIMode } from '../wrappers/helpers/api-mode';
 import { ConsentAPI } from '../types/consent-api';
 
 import * as ConsentValidator from './validation/consent-api';
-
-interface UserConsentOptions {
-	envPrefix?: string;
-	path?: string;
-}
 
 export class UserConsent extends PlatformAPI {
 	constructor(
@@ -18,9 +13,14 @@ export class UserConsent extends PlatformAPI {
 		mode: any = APIMode.Production,
 		private scope: string = 'FTPINK',
 		requestOptions: RequestInit = {},
-		options: UserConsentOptions = { path: '/consent/users/' }
+		options: PlatformAPIOptions = { path: '/consent/users/' }
 	) {
-		super(`${options.path}${uuid}`, mode, requestOptions, options.envPrefix);
+		super(
+			`${options.path}${uuid}`,
+			mode,
+			requestOptions,
+			options
+		);
 	}
 
 	private validateConsent(

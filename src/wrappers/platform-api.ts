@@ -5,6 +5,12 @@ import { APIMode } from './helpers/api-mode';
 import { apiErrorType, ErrorWithData } from '../utils/error';
 import { logger } from '../utils/logger';
 
+export interface PlatformAPIOptions {
+	envPrefix?: string;
+	path?: string;
+	apiKeyHeader?: string;
+}
+
 export class PlatformAPI {
 	protected url: string;
 
@@ -12,14 +18,18 @@ export class PlatformAPI {
 		protected commonPath: string,
 		protected mode: any = APIMode.Production,
 		protected options: RequestInit = {},
-		protected envPrefix: string = 'MEMBERSHIP_API'
+		protected apiOptions: PlatformAPIOptions = {
+			envPrefix: 'MEMBERSHIP_API',
+			apiKeyHeader: 'x-api-key'
+		}
 	) {
+		const apiKeyHeader = this.apiOptions.apiKeyHeader || 'x-api-key';
 		this.options = mergeDeepRight(
 			{
 				timeout: 5000,
 				headers: {
 					'Content-Type': 'application/json',
-					'X-Api-Key': this.apiKey
+					[ apiKeyHeader ]: this.apiKey
 				}
 			},
 			this.options
@@ -40,14 +50,16 @@ export class PlatformAPI {
 	}
 
 	private get apiHost(): string | undefined {
+		const prefix = this.apiOptions.envPrefix || 'MEMBERSHIP_API';
 		return PlatformAPI.guardEnvironmentVariable(
-			`${this.envPrefix}_HOST_${this.mode}`
+			`${prefix}_HOST_${this.mode}`
 		);
 	}
 
 	private get apiKey(): string | undefined {
+		const prefix = this.apiOptions.envPrefix || 'MEMBERSHIP_API';
 		return PlatformAPI.guardEnvironmentVariable(
-			`${this.envPrefix}_KEY_${this.mode}`
+			`${prefix}_KEY_${this.mode}`
 		);
 	}
 

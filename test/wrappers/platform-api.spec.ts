@@ -70,6 +70,19 @@ describe('PlatformAPI wrapper', () => {
 		}
 	});
 
+	it('should resolve the correct env variables given a prefix', async () => {
+		process.env.TEST_PREFIX_HOST_MOCK = 'foo';
+		process.env.TEST_PREFIX_KEY_MOCK = 'bar';
+
+		const mockApi = new PlatformAPI('/', APIMode.Mock, {}, { envPrefix: 'TEST_PREFIX' });
+		expect(mockApi.apiHost).to.equal('foo');
+	});
+
+	it('should override the api key header name given the apiKeyHeader option', async () => {
+		const mockApi = new PlatformAPI('/', APIMode.Mock, {}, { apiKeyHeader: 'foo' });
+		expect(mockApi.options.headers).to.haveOwnProperty('foo');
+	});
+
 	it('should resolve a request', async () => {
 		platformApi('get', 200, 'test-ok-response');
 		const response = await api.request('GET', '', 'Error message');
