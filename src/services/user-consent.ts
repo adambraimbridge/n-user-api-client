@@ -6,6 +6,11 @@ import { ConsentAPI } from '../types/consent-api';
 
 import * as ConsentValidator from './validation/consent-api';
 
+interface UserConsentOptions {
+	envPrefix?: string;
+	path?: string;
+}
+
 export class UserConsent extends PlatformAPI {
 	constructor(
 		uuid: string,
@@ -13,9 +18,9 @@ export class UserConsent extends PlatformAPI {
 		mode: any = APIMode.Production,
 		private scope: string = 'FTPINK',
 		requestOptions: RequestInit = {},
-		envPrefix?: string
+		options: UserConsentOptions = { path: '/consent/users/' }
 	) {
-		super(`/consent/users/${uuid}`, mode, requestOptions, envPrefix);
+		super(`${options.path}${uuid}`, mode, requestOptions, options.envPrefix);
 	}
 
 	private validateConsent(
