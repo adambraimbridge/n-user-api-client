@@ -1,6 +1,12 @@
-# n-user-api-client
+# n-user-api-client 
 
 A client to access the [User API on the FT Membership Platform](https://developer.ft.com/portal/docs-membership-platform-api)
+
+[![npm version](https://badge.fury.io/js/%40financial-times%2Fn-user-api-client.svg)](https://badge.fury.io/js/%40financial-times%2Fn-user-api-client)
+
+[![CircleCI](https://circleci.com/gh/Financial-Times/n-user-api-client.svg?style=shield)](https://circleci.com/gh/Financial-Times/n-user-api-client)
+[![Dependencies](https://david-dm.org/Financial-Times/n-user-api-client.svg)](https://david-dm.org/Financial-Times/n-user-api-client)
+[![devDependencies](https://david-dm.org/Financial-Times/n-user-api-client/dev-status.svg)](https://david-dm.org/Financial-Times/n-user-api-client?type=dev)
 
 ## Installation
 
@@ -49,6 +55,16 @@ apiHost, apiKey - the consumer app should pass these in, based on Vault env vars
 #### Return value
 
 A user ID (string)
+
+### getPaymentDetailsBySession
+
+#### Arguments
+
+session (string) - a valid user session ID. If stale (> 30 minutes old) then the returned user data will be redacted, some fields including address will be null
+
+#### Return value
+
+A payment method detail Object (varies in form depends on the type of the method - CreditCard|PayPal|DirectDebit), returns `null` if the user hasn't got a payment method yet.
 
 ### loginUser
 #### Arguments
