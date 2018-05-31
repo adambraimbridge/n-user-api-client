@@ -42,7 +42,8 @@ module.exports = {
 		consentProxy: {
 			reconsentB2C: require('./responses/consent-proxy-api-reconsent-b2c.json'),
 			profiling: require('./responses/consent-proxy-api-profiling.json'),
-			manageCookies: require('./responses/consent-proxy-api-manage-cookies.json')
+			manageCookies: require('./responses/consent-proxy-api-manage-cookies.json'),
+			manageCookiesWhiteLabel: require('./responses/consent-proxy-api-manage-cookies.json')
 		}
 	}
 };
