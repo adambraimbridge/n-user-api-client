@@ -6,8 +6,6 @@ import { logger } from '../utils/logger';
 import { ErrorWithData, errorTypes } from '../utils/error';
 import { GraphQlUserApiResponse } from '../types';
 
-import { getActivePaymentMethod } from './transforms';
-
 export const getPaymentDetailsBySession = async (
 	session: string,
 	option?: object,
@@ -30,8 +28,14 @@ export const getPaymentDetailsBySession = async (
 				errors: res.errors
 			});
 		}
-		const activePaymentMethod = getActivePaymentMethod(user);
-		return activePaymentMethod;
+		const paymentMethod = R.path(
+			['subscriber', 'billingAccount', 'paymentMethod'],
+			user
+		);
+		if (!paymentMethod) {
+			return null;
+		}
+		return paymentMethod;
 	} catch (error) {
 		const errorMsg = error.data ? error.message : defaultErrorMessage;
 
