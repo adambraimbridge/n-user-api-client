@@ -25,8 +25,9 @@ await updateUserProfile({
     apiHost: process.env['MEMBERSHIP_API_HOST_PROD'],
     apiKey: process.env['MEMBERSHIP_API_KEY_PROD'],
     apiClientId: process.env['AUTH_API_CLIENT_ID_PROD'],
-    userUpdate: { ... }
-})
+    userUpdate: { profile: { user } },
+    useTestUserApi: true
+});
 
 ```
 
@@ -99,7 +100,7 @@ apiHost, apiKey, apiClientId - the consumer app should pass these in, based on V
 
 userId (string)
 
-userUpdate - a [user object](https://developer.ft.com/portal/docs-membership-platform-api-user-profile-request-resource). It will be merged into a fresh copy of the user's record retrieved from the database
+user - a [user object](https://developer.ft.com/portal/docs-membership-platform-api-user-profile-request-resource). It will be merged into a fresh copy of the user's record retrieved from the database
 
 #### Return value
 
