@@ -8,7 +8,8 @@
     "precommit": "node_modules/.bin/secret-squirrel",
     "commitmsg": "node_modules/.bin/secret-squirrel-commitmsg",
     "commit": "commit-wizard",
-    "prepush": "make verify-with-tslint -j3"
+    "prepush": "make verify-with-tslint -j3",
+    "prepare": "npx snyk protect || npx snyk protect -d || true"
   },
   "repository": {
     "type": "git",
@@ -33,6 +34,7 @@
     "mocha": "^5.1.1",
     "nock": "^9.2.6",
     "sinon": "^5.0.7",
+    "snyk": "^1.168.0",
     "ts-node": "^5.0.1",
     "tslint": "^5.10.0",
     "typescript": "^2.8.3"
