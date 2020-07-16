@@ -3,6 +3,7 @@ import * as sinon from 'sinon';
 import { expect } from 'chai';
 import { getUserBySession, getUserIdAndSessionData } from '../src/read/getUser';
 import { graphQlUserBySession, userIdBySession } from './nocks';
+import { doesNotThrow } from 'assert';
 
 describe('getUser', () => {
 	const session = '123';
@@ -117,8 +118,10 @@ describe('getUser', () => {
 
 		it('allows overriding the underlying fetch request options', async () => {
 			userIdBySession({session: params.session});
-			const sessionData = await getUserIdAndSessionData(params, { timeout: 1 });
-			expect(fetchSpy.calledWith(sinon.match.any, sinon.match({ timeout: 1 }))).to.be.true;
+			const sessionData = await getUserIdAndSessionData(params, { timeout: 1 })
+				.catch(err => {
+					expect(fetchSpy.calledWith(sinon.match.any, sinon.match({ timeout: 1 }))).to.be.true;
+				});
 		});
 	});
 
