@@ -37,7 +37,7 @@
     "snyk": "^1.168.0",
     "ts-node": "^5.0.1",
     "tslint": "^5.10.0",
-    "typescript": "^2.8.3"
+    "typescript": "^3.9.6"
   },
   "engines": {
     "node": "^8.9.4"
