@@ -31,7 +31,7 @@ export const getPaymentDetailsBySession = async (
 		const paymentMethod = R.path(
 			['subscriber', 'billingAccount', 'paymentMethod'],
 			user
-		);
+		) as object;
 		if (!paymentMethod) {
 			return null;
 		}
